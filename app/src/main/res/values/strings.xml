@@ -65,4 +65,10 @@
     <string name="error_tag_lost">Tag connection lost</string>
     <string name="error_io">I/O error occurred</string>
     <string name="error_format">Tag format error</string>
+
+    <!-- Disclaimer -->
+    <string name="disclaimer_title">⚠️ Disclaimer — Please Read</string>
+    <string name="disclaimer_message">This application is provided strictly for educational and research purposes only.\n\nBy using this software you acknowledge and agree that:\n\n• This tool is intended solely for use with NFC tags that you personally own.\n\n• You accept full responsibility for how you use this application.\n\n• The developers do not accept any liability or responsibility for misuse, damage, or any consequences arising from the use of this software.\n\n• Unauthorised access to NFC tags or systems you do not own may be illegal in your jurisdiction.\n\nUse responsibly and at your own risk.</string>
+    <string name="disclaimer_accept">I Agree</string>
+    <string name="disclaimer_decline">Decline</string>
 </resources>

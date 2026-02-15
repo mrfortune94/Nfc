@@ -8,6 +8,7 @@ import android.nfc.Tag
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
@@ -40,6 +41,12 @@ class MainActivity : AppCompatActivity() {
         
         database = NfcDatabase.getDatabase(this)
         
+        // Show disclaimer on first launch
+        val prefs = getSharedPreferences("nfc_pro_prefs", MODE_PRIVATE)
+        if (!prefs.getBoolean("disclaimer_accepted", false)) {
+            showDisclaimerDialog(prefs)
+        }
+        
         // Check NFC availability
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         
@@ -70,6 +77,21 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         disableForegroundDispatch()
+    }
+    
+    private fun showDisclaimerDialog(prefs: android.content.SharedPreferences) {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.disclaimer_title)
+            .setMessage(R.string.disclaimer_message)
+            .setCancelable(false)
+            .setPositiveButton(R.string.disclaimer_accept) { dialog, _ ->
+                prefs.edit().putBoolean("disclaimer_accepted", true).apply()
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.disclaimer_decline) { _, _ ->
+                finish()
+            }
+            .show()
     }
     
     private fun setupUI() {
