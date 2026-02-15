@@ -85,6 +85,10 @@ class MainActivity : AppCompatActivity() {
             // Backup functionality would be triggered here
             Toast.makeText(this, "Touch a card to backup", Toast.LENGTH_SHORT).show()
         }
+        
+        binding.apduConsoleButton.setOnClickListener {
+            startActivity(Intent(this, com.nfc.reader.ui.ApduConsoleActivity::class.java))
+        }
     }
     
     private fun handleIntent(intent: Intent) {

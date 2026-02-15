@@ -63,6 +63,12 @@
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         
+        <!-- APDU Console Activity -->
+        <activity
+            android:name=".ui.ApduConsoleActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        
         <!-- Card Emulation Service -->
         <service
             android:name=".hce.CardEmulationService"

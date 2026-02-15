@@ -96,6 +96,12 @@
             android:text="@string/backup_card"
             android:visibility="gone" />
 
+        <Button
+            android:id="@+id/apduConsoleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/apdu_console" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
