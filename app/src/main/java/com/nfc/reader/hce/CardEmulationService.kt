@@ -16,13 +16,17 @@ class CardEmulationService : HostApduService() {
         private const val TAG = "CardEmulationService"
         
         // Standard AIDs (Application Identifiers)
-        private val SELECT_APDU_HEADER = "00A40400".hexToByteArray()
+        private val SELECT_APDU_HEADER = hexStringToByteArray("00A40400")
         private const val STATUS_SUCCESS = "9000"
         private const val STATUS_FAILED = "6F00"
         private const val UNKNOWN_CMD_SW = "0000"
         
         // Sample AID for emulation
-        private val SAMPLE_AID = "F0010203040506".hexToByteArray()
+        private val SAMPLE_AID = hexStringToByteArray("F0010203040506")
+        
+        private fun hexStringToByteArray(hex: String): ByteArray {
+            return hex.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+        }
     }
     
     private var selectedAid: ByteArray? = null

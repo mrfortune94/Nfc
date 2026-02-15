@@ -46,10 +46,8 @@
         android:alpha="0.3"/>
     
     <!-- Center dot -->
-    <circle
-        android:cx="100"
-        android:cy="100"
-        android:radius="8"
+    <path
+        android:pathData="M92,100a8,8 0,1,0 16,0a8,8 0,1,0 -16,0"
         android:fillColor="@color/premium_gold"/>
     
     <!-- Letter N -->

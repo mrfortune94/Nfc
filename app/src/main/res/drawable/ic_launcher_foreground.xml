@@ -56,10 +56,8 @@
         android:alpha="0.4"/>
     
     <!-- Center focus circle -->
-    <circle
-        android:cx="54"
-        android:cy="54"
-        android:radius="5"
+    <path
+        android:pathData="M49,54a5,5 0,1,0 10,0a5,5 0,1,0 -10,0"
         android:fillColor="@color/premium_gold"/>
     
     <!-- Stylized "NP" text -->
