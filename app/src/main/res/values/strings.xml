@@ -1,0 +1,68 @@
+<resources>
+    <string name="app_name">NFC Reader &amp; Writer</string>
+    
+    <!-- Main Activity -->
+    <string name="title_home">NFC Tag Reader</string>
+    <string name="title_write">Write Tag</string>
+    <string name="title_diagnostics">Diagnostics</string>
+    <string name="scan_prompt">Hold your device near an NFC tag</string>
+    <string name="nfc_not_supported">NFC is not supported on this device</string>
+    <string name="nfc_disabled">NFC is disabled. Please enable it in Settings</string>
+    
+    <!-- Tag Reading -->
+    <string name="tag_detected">Tag Detected!</string>
+    <string name="tag_uid">UID:</string>
+    <string name="tag_tech">Technologies:</string>
+    <string name="tag_type">Tag Type:</string>
+    <string name="tag_size">Size:</string>
+    <string name="ndef_message">NDEF Message:</string>
+    <string name="no_ndef">No NDEF data found</string>
+    
+    <!-- Tag Writing -->
+    <string name="write_text">Write Text</string>
+    <string name="write_url">Write URL</string>
+    <string name="write_app">Write App Launch</string>
+    <string name="hint_text">Enter text to write</string>
+    <string name="hint_url">Enter URL (e.g., https://example.com)</string>
+    <string name="hint_package">Enter package name</string>
+    <string name="btn_write">Write to Tag</string>
+    <string name="write_success">Successfully written to tag</string>
+    <string name="write_failed">Failed to write to tag</string>
+    <string name="write_instruction">Touch tag to write</string>
+    
+    <!-- APDU -->
+    <string name="apdu_console">APDU Console</string>
+    <string name="send_apdu">Send APDU</string>
+    <string name="hint_apdu">Enter APDU command (hex)</string>
+    <string name="apdu_response">Response:</string>
+    
+    <!-- Diagnostics -->
+    <string name="export_logs">Export Logs</string>
+    <string name="clear_logs">Clear Logs</string>
+    <string name="log_exported">Logs exported to:</string>
+    <string name="no_logs">No logs available</string>
+    
+    <!-- Card Operations -->
+    <string name="backup_card">Backup Card</string>
+    <string name="clone_card">Clone Card</string>
+    <string name="emulate_card">Emulate Card</string>
+    <string name="backup_success">Card data backed up</string>
+    <string name="clone_success">Card cloned successfully</string>
+    
+    <!-- HCE Service -->
+    <string name="service_desc">NFC Card Emulation Service</string>
+    <string name="aid_group_desc">Custom card emulation</string>
+    
+    <!-- ISO Standards -->
+    <string name="iso_14443a">ISO/IEC 14443-A</string>
+    <string name="iso_14443b">ISO/IEC 14443-B</string>
+    <string name="iso_15693">ISO/IEC 15693</string>
+    <string name="iso_18092">ISO/IEC 18092 (P2P)</string>
+    <string name="iso_7816">ISO/IEC 7816</string>
+    <string name="emv">EMV Contactless</string>
+    
+    <!-- Errors -->
+    <string name="error_tag_lost">Tag connection lost</string>
+    <string name="error_io">I/O error occurred</string>
+    <string name="error_format">Tag format error</string>
+</resources>
