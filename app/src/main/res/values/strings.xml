@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NFC Reader &amp; Writer</string>
+    <string name="app_name">NFC PRO</string>
     
     <!-- Main Activity -->
     <string name="title_home">NFC Tag Reader</string>
