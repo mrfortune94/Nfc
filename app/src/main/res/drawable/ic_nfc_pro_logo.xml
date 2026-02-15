@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    
+    <!-- Outer ring -->
+    <path
+        android:pathData="M100,20 A80,80 0 1,1 99.9,20"
+        android:strokeWidth="8"
+        android:strokeColor="@color/premium_accent"
+        android:fillColor="@android:color/transparent"
+        android:strokeLineCap="round"/>
+    
+    <!-- Inner ring -->
+    <path
+        android:pathData="M100,40 A60,60 0 1,1 99.9,40"
+        android:strokeWidth="6"
+        android:strokeColor="@color/premium_gold"
+        android:fillColor="@android:color/transparent"
+        android:strokeLineCap="round"/>
+    
+    <!-- NFC waves -->
+    <path
+        android:pathData="M70,100 Q85,85 100,100 Q115,115 130,100"
+        android:strokeWidth="4"
+        android:strokeColor="@color/premium_accent_light"
+        android:fillColor="@android:color/transparent"
+        android:strokeLineCap="round"/>
+    
+    <path
+        android:pathData="M60,100 Q80,75 100,100 Q120,125 140,100"
+        android:strokeWidth="3"
+        android:strokeColor="@color/premium_accent_light"
+        android:fillColor="@android:color/transparent"
+        android:strokeLineCap="round"
+        android:alpha="0.6"/>
+    
+    <path
+        android:pathData="M50,100 Q75,65 100,100 Q125,135 150,100"
+        android:strokeWidth="2"
+        android:strokeColor="@color/premium_accent_light"
+        android:fillColor="@android:color/transparent"
+        android:strokeLineCap="round"
+        android:alpha="0.3"/>
+    
+    <!-- Center dot -->
+    <circle
+        android:cx="100"
+        android:cy="100"
+        android:radius="8"
+        android:fillColor="@color/premium_gold"/>
+    
+    <!-- Letter N -->
+    <path
+        android:pathData="M85,90 L85,110 L95,90 L95,110"
+        android:strokeWidth="3"
+        android:strokeColor="@color/white"
+        android:fillColor="@android:color/transparent"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"/>
+    
+    <!-- Letter P -->
+    <path
+        android:pathData="M105,90 L105,110 M105,90 L110,90 Q115,90 115,95 Q115,100 110,100 L105,100"
+        android:strokeWidth="3"
+        android:strokeColor="@color/white"
+        android:fillColor="@android:color/transparent"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"/>
+</vector>
