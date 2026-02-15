@@ -1,6 +1,16 @@
-# NFC Reader & Writer
+# NFC PRO
 
-A comprehensive Android NFC application for reading, writing, and emulating NFC tags with support for multiple ISO/IEC standards.
+A comprehensive Android NFC application for reading, writing, and emulating NFC tags with support for multiple ISO/IEC standards. Now featuring a **premium user interface** with enhanced visual design and smooth animations.
+
+## ✨ Premium UI Features
+
+- **Stunning Splash Screen**: Animated NFC PRO logo with smooth rotation effect
+- **Premium App Icons**: Custom-designed launcher icons with gradient NFC branding
+- **Modern Material Design**: Card-based layouts with elevation and depth
+- **Gradient Backgrounds**: Subtle gradients for a polished, professional look
+- **Enhanced Buttons**: Rounded corners, elevation, and premium color scheme
+- **Smooth Animations**: Fade-in effects and transitions throughout the app
+- **Professional Typography**: Carefully selected fonts and spacing for readability
 
 ## Features
 

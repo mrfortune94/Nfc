@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/main_gradient_bg"
     android:padding="16dp">
 
     <TextView
@@ -73,8 +74,9 @@
             style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
     </LinearLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/sendButton"
+        style="@style/PremiumButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
