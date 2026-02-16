@@ -14,15 +14,15 @@
     <color name="nfc_red">#FFF44336</color>
     <color name="background_light">#FFF5F5F5</color>
     
-    <!-- Premium NFC PRO colors -->
-    <color name="premium_primary">#FF1A237E</color>
-    <color name="premium_primary_dark">#FF0D1642</color>
-    <color name="premium_accent">#FF00BCD4</color>
-    <color name="premium_accent_light">#FF4DD0E1</color>
-    <color name="premium_gradient_start">#FF1A237E</color>
-    <color name="premium_gradient_end">#FF283593</color>
-    <color name="premium_gold">#FFFFD700</color>
-    <color name="premium_silver">#FFC0C0C0</color>
-    <color name="splash_background">#FF0A0E27</color>
+    <!-- Premium NFC PRO colors - Modern Teal/Purple Theme -->
+    <color name="premium_primary">#FF00897B</color>
+    <color name="premium_primary_dark">#FF004D40</color>
+    <color name="premium_accent">#FF7C4DFF</color>
+    <color name="premium_accent_light">#FFB388FF</color>
+    <color name="premium_gradient_start">#FF00897B</color>
+    <color name="premium_gradient_end">#FF26A69A</color>
+    <color name="premium_gold">#FFFFAB40</color>
+    <color name="premium_silver">#FFB0BEC5</color>
+    <color name="splash_background">#FF1A2327</color>
     <color name="card_background">#FFFAFAFA</color>
 </resources>
