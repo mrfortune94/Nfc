@@ -324,7 +324,7 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
                 val cmd = byteArrayOf(0x00, 0xB2.toByte(), p1, p2, 0x00)
                 val resp = safeTransceive(isoDep, cmd, sb)
                 if (isSuccess(resp)) {
-                    sb.append("  SFI $sfi REC $rec → ${resp.dropLast(2).toHexString()}\n")
+                    sb.append("  SFI $sfi REC $rec → ${resp.dropLast(2).toByteArray().toHexString()}\n")
                 }
             }
         }

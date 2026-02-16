@@ -64,7 +64,7 @@ class EmvDeepParser(private val isoDep: IsoDep) {
                 val cmd = byteArrayOf(0x00.toByte(), 0xB2.toByte(), rec.toByte(), (sfi shl 3 or 4).toByte(), 0x00.toByte())
                 val data = transceive(cmd)
                 if (isSuccess(data)) {
-                    sb.append("SFI $sfi Rec $rec: ${data.dropLast(2).toHex()}\n")
+                    sb.append("SFI $sfi Rec $rec: ${data.dropLast(2).toByteArray().toHex()}\n")
                 }
             }
         }
@@ -83,7 +83,7 @@ class EmvDeepParser(private val isoDep: IsoDep) {
         return r
     }
 
-    private fun isSuccess(resp: ByteArray) = resp.size >= 2 && resp.takeLast(2).contentEquals(byteArrayOf(0x90.toByte(), 0x00))
+    private fun isSuccess(resp: ByteArray) = resp.size >= 2 && resp.takeLast(2).toByteArray().contentEquals(byteArrayOf(0x90.toByte(), 0x00))
 
     private fun parseTrack2Enhanced(raw: ByteArray, sb: StringBuilder) {
         // Enhanced: handle BCD compressed, separator D, discretionary for issuer data
