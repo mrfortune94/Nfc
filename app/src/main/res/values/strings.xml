@@ -71,4 +71,100 @@
     <string name="disclaimer_message">This application is provided strictly for educational and research purposes only.\n\nBy using this software you acknowledge and agree that:\n\n• This tool is intended solely for use with NFC tags that you personally own.\n\n• You accept full responsibility for how you use this application.\n\n• The developers do not accept any liability or responsibility for misuse, damage, or any consequences arising from the use of this software.\n\n• Unauthorised access to NFC tags or systems you do not own may be illegal in your jurisdiction.\n\nUse responsibly and at your own risk.</string>
     <string name="disclaimer_accept">I Agree</string>
     <string name="disclaimer_decline">Decline</string>
+
+    <!-- Emulate Card Activity -->
+    <string name="emulate_card_title">Card Emulation</string>
+    <string name="emulate_card_desc">Emulate your backed up NFC cards using Host Card Emulation (HCE)</string>
+    <string name="saved_cards">Saved Cards</string>
+    <string name="no_saved_cards">No saved cards. Backup a card first.</string>
+    <string name="select_card">Select Card</string>
+    <string name="backup_new_card">Backup New Card</string>
+    <string name="hold_card_to_backup">Hold a card near the device to backup</string>
+    <string name="selected_card">Selected Card</string>
+    <string name="emulation_status">Emulation Status</string>
+    <string name="emulation_active">● Emulation Active</string>
+    <string name="emulation_inactive">○ Emulation Inactive</string>
+    <string name="start_emulation">Start Emulation</string>
+    <string name="stop_emulation">Stop Emulation</string>
+    <string name="emulation_started">Card emulation started</string>
+    <string name="emulation_stopped">Card emulation stopped</string>
+    <string name="emulation_supported">Emulation Supported</string>
+    <string name="emulation_not_supported">Emulation Not Supported</string>
+    <string name="emulation_not_supported_message">This card type cannot be emulated via HCE. Only certain card types support software emulation.</string>
+    <string name="select_card_first">Please select a card first</string>
+    <string name="select_card_to_emulate">Select Card to Emulate</string>
+    <string name="no_cards_title">No Cards Available</string>
+    <string name="no_cards_message">You need to backup a card first before you can emulate it.</string>
+    <string name="backup_now">Backup Now</string>
+    <string name="backup_prompt_message">Enter a name for this card backup</string>
+    <string name="enter_card_name">Card name</string>
+    <string name="scan_card">Scan Card</string>
+    <string name="available_cards_count">%d cards available</string>
+    <string name="card_uid_format">UID: %s</string>
+    <string name="card_type_format">Type: %s</string>
+    <string name="card_iso_format">ISO: %s</string>
+
+    <!-- Backup Manager Activity -->
+    <string name="backup_manager_title">Backup Manager</string>
+    <string name="backup_count_format">%d backups</string>
+    <string name="backup_count_default">0 backups</string>
+    <string name="new_backup">New Backup</string>
+    <string name="export_all">Export All</string>
+    <string name="no_backups_yet">No backups yet. Tap \"New Backup\" to create one.</string>
+    <string name="create_backup">Create Backup</string>
+    <string name="create_backup_message">Enter a name for this backup, then scan the card.</string>
+    <string name="raw_data">Raw Data</string>
+    <string name="delete_backup">Delete Backup</string>
+    <string name="delete_backup_confirm">Are you sure you want to delete \"%s\"?</string>
+    <string name="delete">Delete</string>
+    <string name="backup_deleted">Backup deleted</string>
+    <string name="no_backups_to_export">No backups to export</string>
+    <string name="can_emulate">CAN EMULATE</string>
+    <string name="cannot_emulate">NO EMULATE</string>
+    <string name="view">View</string>
+    <string name="emulate">Emulate</string>
+    <string name="view_raw_data">View Raw Data</string>
+
+    <!-- Protected Tag Activity -->
+    <string name="protected_tag_title">Protected Tags</string>
+    <string name="select_operation">Select Operation</string>
+    <string name="op_read_sector">Read Sector</string>
+    <string name="op_write_block">Write Block</string>
+    <string name="op_test_auth">Test Authentication</string>
+    <string name="op_dump_all">Dump All Sectors</string>
+    <string name="authentication_key">Authentication Key</string>
+    <string name="key_a">Key A</string>
+    <string name="key_b">Key B</string>
+    <string name="key_hex_hint">Key (12 hex characters)</string>
+    <string name="common_keys">Common Keys:</string>
+    <string name="default_key">Default</string>
+    <string name="mad_key">MAD</string>
+    <string name="nfc_forum_key">NFC Forum</string>
+    <string name="sector_selection">Sector Selection</string>
+    <string name="sector">Sector:</string>
+    <string name="write_data">Write Data</string>
+    <string name="block_number_hint">Block Number</string>
+    <string name="data_hex_hint">Data (32 hex characters)</string>
+    <string name="write_warning">⚠️ Writing incorrect data can permanently damage your card!</string>
+    <string name="execute">Execute</string>
+    <string name="read_sector">Read Sector</string>
+    <string name="write_block">Write Block</string>
+    <string name="test_authentication">Test Auth</string>
+    <string name="dump_all_sectors">Dump All</string>
+    <string name="result">Result</string>
+    <string name="scan_tag_first">Scan a tag first</string>
+    <string name="invalid_key">Key must be exactly 12 hex characters</string>
+    <string name="invalid_key_format">Invalid key format</string>
+    <string name="invalid_block_data">Data must be exactly 32 hex characters (16 bytes)</string>
+    <string name="invalid_block_number">Invalid block number</string>
+    <string name="tag_uid_format">UID: %s</string>
+    <string name="mifare_classic_detected">Mifare Classic - Ready</string>
+    <string name="iso_dep_detected">ISO-DEP Card Detected</string>
+    <string name="unsupported_tag_type">Unsupported tag type for this operation</string>
+    <string name="tag_detected_ready">Tag detected - ready for operation</string>
+
+    <!-- Main Activity Buttons -->
+    <string name="title_emulate">Emulate Card</string>
+    <string name="title_backup">Backup Manager</string>
+    <string name="title_protected">Protected Tags</string>
 </resources>

@@ -18,6 +18,9 @@ import com.nfc.reader.databinding.ActivityMainBinding
 import com.nfc.reader.nfc.NfcTagReader
 import com.nfc.reader.ui.DiagnosticsActivity
 import com.nfc.reader.ui.WriteTagActivity
+import com.nfc.reader.ui.EmulateCardActivity
+import com.nfc.reader.ui.BackupManagerActivity
+import com.nfc.reader.ui.ProtectedTagActivity
 import com.nfc.reader.utils.toHexString
 import kotlinx.coroutines.launch
 
@@ -97,6 +100,18 @@ class MainActivity : AppCompatActivity() {
     private fun setupUI() {
         binding.writeTagButton.setOnClickListener {
             startActivity(Intent(this, WriteTagActivity::class.java))
+        }
+        
+        binding.emulateButton.setOnClickListener {
+            startActivity(Intent(this, EmulateCardActivity::class.java))
+        }
+        
+        binding.backupManagerButton.setOnClickListener {
+            startActivity(Intent(this, BackupManagerActivity::class.java))
+        }
+        
+        binding.protectedTagButton.setOnClickListener {
+            startActivity(Intent(this, ProtectedTagActivity::class.java))
         }
         
         binding.diagnosticsButton.setOnClickListener {
@@ -239,7 +254,11 @@ class MainActivity : AppCompatActivity() {
     
     private fun disableButtons() {
         binding.writeTagButton.isEnabled = false
+        binding.emulateButton.isEnabled = false
+        binding.backupManagerButton.isEnabled = false
+        binding.protectedTagButton.isEnabled = false
         binding.diagnosticsButton.isEnabled = false
         binding.backupButton.isEnabled = false
+        binding.apduConsoleButton.isEnabled = false
     }
 }

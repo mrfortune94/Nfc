@@ -76,6 +76,24 @@
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         
+        <!-- Emulate Card Activity -->
+        <activity
+            android:name=".ui.EmulateCardActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        
+        <!-- Backup Manager Activity -->
+        <activity
+            android:name=".ui.BackupManagerActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        
+        <!-- Protected Tag Activity -->
+        <activity
+            android:name=".ui.ProtectedTagActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        
         <!-- Card Emulation Service -->
         <service
             android:name=".hce.CardEmulationService"
