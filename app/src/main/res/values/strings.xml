@@ -6,8 +6,11 @@
     <string name="title_write">Write Tag</string>
     <string name="title_diagnostics">Diagnostics</string>
     <string name="scan_prompt">Hold your device near an NFC tag</string>
+    <string name="waiting_for_nfc">Waiting for NFC tag…</string>
     <string name="nfc_not_supported">NFC is not supported on this device</string>
     <string name="nfc_disabled">NFC is disabled. Please enable it in Settings</string>
+    <string name="nfc_hardware_not_found">NFC hardware not found</string>
+    <string name="nfc_is_off">NFC is OFF - enable it</string>
     
     <!-- Tag Reading -->
     <string name="tag_detected">Tag Detected!</string>
