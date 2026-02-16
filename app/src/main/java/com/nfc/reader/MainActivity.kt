@@ -344,8 +344,13 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
     )
 
     private fun parseTrack2(raw: ByteArray): Track2Parsed {
-        val digits = raw.joinToString("") { "%02X".format(it) }
-        val sepIndex = digits.indexOfFirst { it == 'D' || it == 'd' || it == '=' }
+        val digits = buildString {
+            raw.forEach { b ->
+                append(((b.toInt() shr 4) and 0x0F).toString(16).uppercase())
+                append((b.toInt() and 0x0F).toString(16).uppercase())
+            }
+        }
+        val sepIndex = digits.indexOfFirst { it == 'D' || it == 'd' }
         val pan = if (sepIndex > 0) digits.substring(0, sepIndex) else digits.takeWhile { it.isDigit() }
         var expiry: String? = null
         var service: String? = null
@@ -380,6 +385,7 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
         }
     }
 
+    // Simple TLV decoder; does not recurse into constructed tags.
     private fun decodeTlv(data: ByteArray): String {
         val sb = StringBuilder()
         var index = 0
@@ -391,10 +397,8 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
             val lenByte = data[index].toInt() and 0xFF
             index++
             val length: Int
-            val lenConsumed: Int
             if (lenByte and 0x80 == 0) {
                 length = lenByte
-                lenConsumed = 1
             } else {
                 val numBytes = lenByte and 0x7F
                 if (index + numBytes > data.size) break
@@ -402,7 +406,6 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
                     (acc shl 8) or (b.toInt() and 0xFF)
                 }
                 index += numBytes
-                lenConsumed = 1 + numBytes
             }
 
             if (index + length > data.size) break
