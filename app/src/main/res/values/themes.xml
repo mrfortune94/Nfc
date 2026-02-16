@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme - BMW ProTools Black & Neon Green Style -->
-    <style name="Theme.NfcReader" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.NfcReader" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Primary brand color - Neon Green -->
         <item name="colorPrimary">@color/protools_neon_green</item>
         <item name="colorPrimaryVariant">@color/protools_neon_green_dark</item>

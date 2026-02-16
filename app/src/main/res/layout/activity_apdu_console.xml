@@ -57,9 +57,7 @@
             android:layout_weight="1"
             android:layout_marginEnd="4dp"
             android:text="SELECT"
-            android:textColor="@color/protools_neon_green"
-            app:strokeColor="@color/protools_neon_green"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+            style="@style/OutlinedButton" />
 
         <Button
             android:id="@+id/readBtn"
@@ -69,9 +67,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:text="READ"
-            android:textColor="@color/protools_neon_green"
-            app:strokeColor="@color/protools_neon_green"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+            style="@style/OutlinedButton" />
 
         <Button
             android:id="@+id/getDataBtn"
@@ -80,9 +76,7 @@
             android:layout_weight="1"
             android:layout_marginStart="4dp"
             android:text="GET DATA"
-            android:textColor="@color/protools_neon_green"
-            app:strokeColor="@color/protools_neon_green"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+            style="@style/OutlinedButton" />
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
