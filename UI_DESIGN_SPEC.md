@@ -1,48 +1,48 @@
 # NFC PRO - Premium UI Design Specification
 
 ## Overview
-This document describes the premium user interface implementation for NFC PRO, transforming the application from a basic utility to a professional-grade NFC solution.
+This document describes the premium user interface implementation for NFC PRO, featuring a **BMW ProTools-inspired dark theme with neon green accents** for a sleek, professional look.
 
 ## Color Palette
 
-### Primary Colors
-- **Premium Primary**: #1A237E (Deep Indigo)
-  - Used for: Main UI elements, primary buttons, headers
-  - Psychology: Trust, professionalism, technology
+### Primary Colors - BMW ProTools Dark Theme
+- **Neon Green Primary**: #00FF41
+  - Used for: Main UI elements, primary buttons, headers, accents
+  - Psychology: High-tech, premium, professional
 
-- **Premium Primary Dark**: #0D1642 (Midnight Blue)
-  - Used for: Status bars, darker accents
+- **Neon Green Dark**: #00CC33
+  - Used for: Secondary accents, card borders
   - Creates depth and sophistication
 
-- **Premium Accent**: #00BCD4 (Cyan)
-  - Used for: Interactive elements, focus states, tabs
-  - Provides vibrant contrast and modern feel
-
-- **Premium Accent Light**: #4DD0E1 (Light Cyan)
-  - Used for: Highlights, NFC signal waves
-  - Creates visual interest without overwhelming
-
-### Special Colors
-- **Premium Gold**: #FFD700
-  - Used for: Logo accents, premium badges
-  - Conveys quality and exclusivity
-
-- **Premium Silver**: #C0C0C0
-  - Used for: Secondary accents
-  - Complements gold in dual-tone designs
+- **Neon Green Light**: #39FF14
+  - Used for: Interactive highlights, focus states
+  - Provides vibrant contrast
 
 ### Background Colors
-- **Splash Background**: #0A0E27 (Dark Navy)
-  - Creates dramatic contrast for splash screen
-  - Makes logo and text pop
+- **ProTools Black**: #000000
+  - Primary background color
+  - Creates dramatic contrast
 
-- **Card Background**: #FAFAFA (Off-white)
-  - Soft white for card surfaces
-  - Reduces eye strain
+- **ProTools Dark Gray**: #121212
+  - Secondary background, subtle gradients
+  - Slight variation for depth
 
-- **Gradient Backgrounds**: Light gray to white (#F5F5F5 → #FFFFFF)
-  - Subtle depth without distraction
-  - Professional appearance
+- **ProTools Medium Gray**: #1E1E1E
+  - Card backgrounds, surfaces
+  - Provides content separation
+
+- **ProTools Light Gray**: #2D2D2D
+  - Disabled states, subtle borders
+  - Light accents in dark theme
+
+### Text Colors
+- **Primary Text**: #FFFFFF (White)
+  - Main text on dark backgrounds
+  - High contrast for readability
+
+- **Secondary Text**: #B3B3B3 (Light Gray)
+  - Subtitles, descriptions, secondary info
+  - Softer contrast for hierarchy
 
 ## Typography
 
@@ -76,25 +76,25 @@ This document describes the premium user interface implementation for NFC PRO, t
 
 ## Logo Design
 
-### NFC PRO Logo Components
+### NFC PRO Logo Components - BMW ProTools Style
 
 #### Structure
-1. **Outer Ring** (Cyan, #00BCD4)
+1. **Outer Ring** (Neon Green, #00FF41)
    - 8dp stroke width
    - Represents communication field
    - 80dp radius from center
 
-2. **Inner Ring** (Gold, #FFD700)
+2. **Inner Ring** (Neon Green Dark, #00CC33)
    - 6dp stroke width
    - Represents secure core
    - 60dp radius from center
 
-3. **Signal Waves** (Light Cyan, #4DD0E1)
+3. **Signal Waves** (Neon Green Light, #39FF14)
    - 3 curved waves at varying opacities
    - Represents NFC transmission
    - Decreasing thickness: 4dp, 3dp, 2dp
 
-4. **Center Dot** (Gold, #FFD700)
+4. **Center Dot** (Neon Green, #00FF41)
    - 8dp radius
    - Focus point of design
    - Represents tag/reader interaction
@@ -105,8 +105,8 @@ This document describes the premium user interface implementation for NFC PRO, t
    - Bold, modern letterforms
 
 ### Logo Variations
-- **Full Color**: Primary logo for light backgrounds
-- **Monochrome White**: For dark backgrounds
+- **Neon Green on Black**: Primary logo for dark backgrounds
+- **Monochrome White**: For contrast needs
 - **Animated**: Slow rotation (3s per revolution)
 
 ## Splash Screen
@@ -117,7 +117,7 @@ This document describes the premium user interface implementation for NFC PRO, t
 │                         │
 │    [Animated Logo]      │ ← 180dp × 180dp, spinning
 │                         │
-│      NFC PRO            │ ← 36sp, Gold, Bold
+│      NFC PRO            │ ← 36sp, Neon Green, Bold
 │                         │
 │ Advanced NFC Solutions  │ ← 16sp, Light Cyan
 │                         │

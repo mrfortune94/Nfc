@@ -1,32 +1,65 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.NfcReader" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/premium_primary</item>
-        <item name="colorPrimaryVariant">@color/premium_primary_dark</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/premium_accent</item>
-        <item name="colorSecondaryVariant">@color/premium_accent_light</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+    <!-- Base application theme - BMW ProTools Black & Neon Green Style -->
+    <style name="Theme.NfcReader" parent="Theme.MaterialComponents.NoActionBar">
+        <!-- Primary brand color - Neon Green -->
+        <item name="colorPrimary">@color/protools_neon_green</item>
+        <item name="colorPrimaryVariant">@color/protools_neon_green_dark</item>
+        <item name="colorOnPrimary">@color/protools_black</item>
+        <!-- Secondary brand color - Neon Green Light -->
+        <item name="colorSecondary">@color/protools_neon_green_light</item>
+        <item name="colorSecondaryVariant">@color/protools_neon_green</item>
+        <item name="colorOnSecondary">@color/protools_black</item>
+        <!-- Background colors -->
+        <item name="android:colorBackground">@color/protools_black</item>
+        <item name="colorSurface">@color/protools_dark_gray</item>
+        <item name="colorOnSurface">@color/protools_text_primary</item>
+        <!-- Status bar color -->
+        <item name="android:statusBarColor">@color/protools_black</item>
+        <item name="android:navigationBarColor">@color/protools_black</item>
+        <item name="android:windowBackground">@color/protools_black</item>
     </style>
     
-    <!-- Splash Screen Theme -->
-    <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:windowBackground">@color/splash_background</item>
-        <item name="android:statusBarColor">@color/splash_background</item>
-        <item name="android:navigationBarColor">@color/splash_background</item>
+    <!-- Splash Screen Theme - BMW ProTools Black & Neon Green Style -->
+    <style name="SplashTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:windowBackground">@color/protools_black</item>
+        <item name="android:statusBarColor">@color/protools_black</item>
+        <item name="android:navigationBarColor">@color/protools_black</item>
         <item name="android:windowFullscreen">true</item>
     </style>
     
-    <!-- Premium Button Style -->
+    <!-- Premium Button Style - BMW ProTools Neon Green -->
     <style name="PremiumButton" parent="Widget.MaterialComponents.Button">
-        <item name="android:textColor">@color/white</item>
-        <item name="backgroundTint">@color/premium_primary</item>
-        <item name="cornerRadius">12dp</item>
-        <item name="android:elevation">6dp</item>
+        <item name="android:textColor">@color/protools_black</item>
+        <item name="backgroundTint">@color/protools_neon_green</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="rippleColor">@color/protools_neon_green_light</item>
+    </style>
+    
+    <!-- Outlined Button Style - BMW ProTools -->
+    <style name="OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/protools_neon_green</item>
+        <item name="strokeColor">@color/protools_neon_green</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="rippleColor">@color/protools_neon_green_light</item>
+    </style>
+    
+    <!-- Accent Button Style - Dark variant -->
+    <style name="AccentButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/protools_neon_green</item>
+        <item name="backgroundTint">@color/protools_medium_gray</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:elevation">4dp</item>
         <item name="android:stateListAnimator">@null</item>
         <item name="android:padding">16dp</item>
         <item name="android:textAllCaps">false</item>

@@ -12,7 +12,9 @@
         android:layout_height="wrap_content"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
-        app:cardBackgroundColor="@color/card_background"
+        app:cardBackgroundColor="@color/protools_medium_gray"
+        app:strokeColor="@color/protools_neon_green"
+        app:strokeWidth="1dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
@@ -46,14 +48,14 @@
                         android:text="@string/backup_manager_title"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:textColor="@color/premium_primary" />
+                        android:textColor="@color/protools_neon_green" />
 
                     <TextView
                         android:id="@+id/backupCountText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/backup_count_default"
-                        android:textColor="@color/premium_primary_dark" />
+                        android:textColor="@color/protools_text_secondary" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -75,15 +77,13 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/exportAllButton"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/OutlinedButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/export_all"
-                    android:textColor="@color/premium_primary"
-                    app:strokeColor="@color/premium_primary"
                     app:icon="@android:drawable/ic_menu_share"
-                    app:iconTint="@color/premium_primary" />
+                    app:iconTint="@color/protools_neon_green" />
             </LinearLayout>
 
             <TextView
@@ -92,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/hold_card_to_backup"
-                android:textColor="@color/premium_accent"
+                android:textColor="@color/protools_neon_green_light"
                 android:textStyle="italic"
                 android:visibility="gone" />
         </LinearLayout>
@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:text="@string/no_backups_yet"
         android:textSize="16sp"
-        android:textColor="@color/premium_primary_dark"
+        android:textColor="@color/protools_text_secondary"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/headerCard"
         app:layout_constraintBottom_toBottomOf="parent"

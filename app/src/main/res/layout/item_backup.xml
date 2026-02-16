@@ -6,7 +6,9 @@
     android:layout_marginBottom="12dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
-    app:cardBackgroundColor="@color/card_background">
+    app:cardBackgroundColor="@color/protools_medium_gray"
+    app:strokeColor="@color/protools_neon_green_dark"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@color/premium_primary" />
+                    android:textColor="@color/protools_neon_green" />
 
                 <TextView
                     android:id="@+id/cardUidText"
@@ -41,7 +43,7 @@
                     android:layout_marginTop="4dp"
                     android:fontFamily="monospace"
                     android:textSize="12sp"
-                    android:textColor="@color/premium_primary_dark" />
+                    android:textColor="@color/protools_text_secondary" />
             </LinearLayout>
 
             <TextView
@@ -51,7 +53,7 @@
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"
                 android:textSize="10sp"
-                android:textColor="@color/white"
+                android:textColor="@color/protools_black"
                 android:background="@drawable/badge_emulate_supported" />
         </LinearLayout>
 
@@ -67,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="12sp"
-                android:textColor="@color/premium_primary_dark" />
+                android:textColor="@color/protools_text_secondary" />
 
             <TextView
                 android:id="@+id/cardIsoText"
@@ -75,7 +77,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="12sp"
-                android:textColor="@color/premium_primary_dark" />
+                android:textColor="@color/protools_text_secondary" />
         </LinearLayout>
 
         <TextView
@@ -84,7 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textSize="11sp"
-            android:textColor="@color/premium_silver" />
+            android:textColor="@color/protools_text_secondary" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -98,9 +100,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/view"
-                android:textColor="@color/premium_primary"
+                android:textColor="@color/protools_neon_green"
                 app:icon="@android:drawable/ic_menu_view"
-                app:iconTint="@color/premium_primary" />
+                app:iconTint="@color/protools_neon_green" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/emulateButton"
@@ -108,9 +110,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/emulate"
-                android:textColor="@color/premium_accent"
+                android:textColor="@color/protools_neon_green_light"
                 app:icon="@android:drawable/ic_media_play"
-                app:iconTint="@color/premium_accent" />
+                app:iconTint="@color/protools_neon_green_light" />
 
             <View
                 android:layout_width="0dp"

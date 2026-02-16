@@ -20,7 +20,9 @@
             android:visibility="gone"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/card_background">
+            app:cardBackgroundColor="@color/protools_medium_gray"
+            app:strokeColor="@color/protools_neon_green"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -34,7 +36,7 @@
                     android:text="@string/tag_detected"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@color/nfc_green" />
+                    android:textColor="@color/protools_neon_green" />
 
                 <TextView
                     android:id="@+id/tagUidText"
@@ -42,21 +44,21 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:fontFamily="monospace"
-                    android:textColor="@color/premium_primary_dark" />
+                    android:textColor="@color/protools_text_primary" />
 
                 <TextView
                     android:id="@+id/tagTypeText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:textColor="@color/premium_primary_dark" />
+                    android:textColor="@color/protools_text_secondary" />
 
                 <TextView
                     android:id="@+id/tagTechText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:textColor="@color/premium_primary_dark"
+                    android:textColor="@color/protools_text_secondary"
                     android:textSize="12sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -68,7 +70,9 @@
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/card_background">
+            app:cardBackgroundColor="@color/protools_medium_gray"
+            app:strokeColor="@color/protools_neon_green_dark"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -82,7 +86,7 @@
                     android:text="@string/select_operation"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@color/premium_primary" />
+                    android:textColor="@color/protools_neon_green" />
 
                 <Spinner
                     android:id="@+id/operationSpinner"
@@ -90,7 +94,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:background="@android:drawable/btn_dropdown"
-                    android:padding="12dp" />
+                    android:padding="12dp"
+                    android:popupBackground="@color/protools_medium_gray" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -101,7 +106,9 @@
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/card_background">
+            app:cardBackgroundColor="@color/protools_medium_gray"
+            app:strokeColor="@color/protools_neon_green_dark"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -115,7 +122,7 @@
                     android:text="@string/authentication_key"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@color/premium_primary" />
+                    android:textColor="@color/protools_neon_green" />
 
                 <RadioGroup
                     android:id="@+id/keyTypeRadioGroup"
@@ -129,6 +136,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/key_a"
+                        android:textColor="@color/protools_text_primary"
+                        android:buttonTint="@color/protools_neon_green"
                         android:checked="true" />
 
                     <RadioButton
@@ -136,14 +145,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="24dp"
-                        android:text="@string/key_b" />
+                        android:text="@string/key_b"
+                        android:textColor="@color/protools_text_primary"
+                        android:buttonTint="@color/protools_neon_green" />
                 </RadioGroup>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:hint="@string/key_hex_hint">
+                    android:hint="@string/key_hex_hint"
+                    app:boxStrokeColor="@color/protools_neon_green"
+                    app:hintTextColor="@color/protools_neon_green"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/keyInput"
@@ -152,7 +166,8 @@
                         android:fontFamily="monospace"
                         android:inputType="textCapCharacters"
                         android:maxLength="12"
-                        android:text="FFFFFFFFFFFF" />
+                        android:text="FFFFFFFFFFFF"
+                        android:textColor="@color/protools_text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
@@ -161,7 +176,7 @@
                     android:layout_marginTop="8dp"
                     android:text="@string/common_keys"
                     android:textSize="14sp"
-                    android:textColor="@color/premium_primary_dark" />
+                    android:textColor="@color/protools_text_secondary" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -171,32 +186,29 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/useDefaultKeyButton"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        style="@style/OutlinedButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/default_key"
-                        android:textSize="10sp"
-                        app:strokeColor="@color/premium_primary" />
+                        android:textSize="10sp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/useMadKeyButton"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        style="@style/OutlinedButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="@string/mad_key"
-                        android:textSize="10sp"
-                        app:strokeColor="@color/premium_primary" />
+                        android:textSize="10sp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/useNfcForumKeyButton"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        style="@style/OutlinedButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="@string/nfc_forum_key"
-                        android:textSize="10sp"
-                        app:strokeColor="@color/premium_primary" />
+                        android:textSize="10sp" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -209,7 +221,9 @@
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/card_background">
+            app:cardBackgroundColor="@color/protools_medium_gray"
+            app:strokeColor="@color/protools_neon_green_dark"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -223,7 +237,7 @@
                     android:text="@string/sector_selection"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@color/premium_primary" />
+                    android:textColor="@color/protools_neon_green" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -236,7 +250,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sector"
-                        android:textColor="@color/premium_primary_dark" />
+                        android:textColor="@color/protools_text_secondary" />
 
                     <SeekBar
                         android:id="@+id/sectorSeekBar"
@@ -245,7 +259,9 @@
                         android:layout_weight="1"
                         android:layout_marginHorizontal="16dp"
                         android:max="15"
-                        android:progress="0" />
+                        android:progress="0"
+                        android:progressTint="@color/protools_neon_green"
+                        android:thumbTint="@color/protools_neon_green" />
 
                     <TextView
                         android:id="@+id/sectorValueText"
@@ -253,7 +269,7 @@
                         android:layout_height="wrap_content"
                         android:text="0"
                         android:textAlignment="center"
-                        android:textColor="@color/premium_primary"
+                        android:textColor="@color/protools_neon_green"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -268,7 +284,9 @@
             android:visibility="gone"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/card_background">
+            app:cardBackgroundColor="@color/protools_medium_gray"
+            app:strokeColor="@color/protools_neon_green_dark"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -282,26 +300,33 @@
                     android:text="@string/write_data"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@color/premium_primary" />
+                    android:textColor="@color/protools_neon_green" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:hint="@string/block_number_hint">
+                    android:hint="@string/block_number_hint"
+                    app:boxStrokeColor="@color/protools_neon_green"
+                    app:hintTextColor="@color/protools_neon_green"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/blockNumberInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="number" />
+                        android:inputType="number"
+                        android:textColor="@color/protools_text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:hint="@string/data_hex_hint">
+                    android:hint="@string/data_hex_hint"
+                    app:boxStrokeColor="@color/protools_neon_green"
+                    app:hintTextColor="@color/protools_neon_green"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/writeDataInput"
@@ -309,7 +334,8 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="monospace"
                         android:inputType="textCapCharacters"
-                        android:maxLength="32" />
+                        android:maxLength="32"
+                        android:textColor="@color/protools_text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
@@ -338,7 +364,9 @@
             android:layout_marginTop="16dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/card_background">
+            app:cardBackgroundColor="@color/protools_medium_gray"
+            app:strokeColor="@color/protools_neon_green_dark"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -352,7 +380,7 @@
                     android:text="@string/result"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@color/premium_primary" />
+                    android:textColor="@color/protools_neon_green" />
 
                 <TextView
                     android:id="@+id/resultText"
@@ -361,7 +389,7 @@
                     android:layout_marginTop="12dp"
                     android:fontFamily="monospace"
                     android:textIsSelectable="true"
-                    android:textColor="@color/premium_primary_dark"
+                    android:textColor="@color/protools_text_primary"
                     android:visibility="gone" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

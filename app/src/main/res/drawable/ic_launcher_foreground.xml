@@ -5,44 +5,44 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
     
-    <!-- Background -->
+    <!-- Background - Black -->
     <path
-        android:fillColor="@color/premium_primary"
+        android:fillColor="@color/protools_black"
         android:pathData="M0,0h108v108h-108z"/>
     
-    <!-- Gradient circle background -->
+    <!-- Gradient circle background - Dark Gray -->
     <path
-        android:fillColor="@color/premium_primary_dark"
+        android:fillColor="@color/protools_dark_gray"
         android:pathData="M54,54m-48,0a48,48 0,1,1 96,0a48,48 0,1,1 -96,0"/>
     
-    <!-- Outer ring with accent -->
+    <!-- Outer ring with neon green -->
     <path
         android:pathData="M54,14 A40,40 0 1,1 53.9,14"
         android:strokeWidth="4"
-        android:strokeColor="@color/premium_accent"
+        android:strokeColor="@color/protools_neon_green"
         android:fillColor="@android:color/transparent"
         android:strokeLineCap="round"/>
     
-    <!-- Inner ring with gold -->
+    <!-- Inner ring with neon green dark -->
     <path
         android:pathData="M54,24 A30,30 0 1,1 53.9,24"
         android:strokeWidth="3"
-        android:strokeColor="@color/premium_gold"
+        android:strokeColor="@color/protools_neon_green_dark"
         android:fillColor="@android:color/transparent"
         android:strokeLineCap="round"/>
     
-    <!-- NFC signal waves -->
+    <!-- NFC signal waves - Neon Green Light -->
     <path
         android:pathData="M40,54 Q47,47 54,54 Q61,61 68,54"
         android:strokeWidth="2.5"
-        android:strokeColor="@color/premium_accent_light"
+        android:strokeColor="@color/protools_neon_green_light"
         android:fillColor="@android:color/transparent"
         android:strokeLineCap="round"/>
     
     <path
         android:pathData="M35,54 Q44.5,42 54,54 Q63.5,66 73,54"
         android:strokeWidth="2"
-        android:strokeColor="@color/premium_accent_light"
+        android:strokeColor="@color/protools_neon_green_light"
         android:fillColor="@android:color/transparent"
         android:strokeLineCap="round"
         android:alpha="0.7"/>
@@ -50,17 +50,17 @@
     <path
         android:pathData="M30,54 Q42,37 54,54 Q66,71 78,54"
         android:strokeWidth="1.5"
-        android:strokeColor="@color/premium_accent_light"
+        android:strokeColor="@color/protools_neon_green_light"
         android:fillColor="@android:color/transparent"
         android:strokeLineCap="round"
         android:alpha="0.4"/>
     
-    <!-- Center focus circle -->
+    <!-- Center focus circle - Neon Green -->
     <path
         android:pathData="M49,54a5,5 0,1,0 10,0a5,5 0,1,0 -10,0"
-        android:fillColor="@color/premium_gold"/>
+        android:fillColor="@color/protools_neon_green"/>
     
-    <!-- Stylized "NP" text -->
+    <!-- Stylized "NP" text - White -->
     <path
         android:pathData="M46,48 L46,60 L52,48 L52,60"
         android:strokeWidth="2"
