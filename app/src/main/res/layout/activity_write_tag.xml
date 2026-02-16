@@ -10,11 +10,11 @@
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/card_background"
+        android:background="@color/protools_medium_gray"
         android:elevation="4dp"
-        app:tabSelectedTextColor="@color/premium_primary"
-        app:tabIndicatorColor="@color/premium_accent"
-        app:tabTextColor="@color/premium_primary_dark"
+        app:tabSelectedTextColor="@color/protools_neon_green"
+        app:tabIndicatorColor="@color/protools_neon_green"
+        app:tabTextColor="@color/protools_text_secondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -54,13 +54,17 @@
                 android:id="@+id/inputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="16dp"
+                app:boxStrokeColor="@color/protools_neon_green"
+                app:hintTextColor="@color/protools_neon_green"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/inputText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/hint_text" />
+                    android:hint="@string/hint_text"
+                    android:textColor="@color/protools_text_primary" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -68,13 +72,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:visibility="gone">
+                android:visibility="gone"
+                app:boxStrokeColor="@color/protools_neon_green"
+                app:hintTextColor="@color/protools_neon_green"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/packageText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/hint_package" />
+                    android:hint="@string/hint_package"
+                    android:textColor="@color/protools_text_primary" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
@@ -92,14 +100,16 @@
                 android:layout_marginTop="24dp"
                 android:text="@string/write_instruction"
                 android:textAlignment="center"
-                android:textStyle="italic" />
+                android:textStyle="italic"
+                android:textColor="@color/protools_text_secondary" />
 
             <TextView
                 android:id="@+id/statusText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@color/protools_neon_green" />
 
         </LinearLayout>
     </ScrollView>

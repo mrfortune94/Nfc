@@ -14,15 +14,26 @@
     <color name="nfc_red">#FFF44336</color>
     <color name="background_light">#FFF5F5F5</color>
     
-    <!-- Premium NFC PRO colors - Modern Teal/Purple Theme -->
-    <color name="premium_primary">#FF00897B</color>
-    <color name="premium_primary_dark">#FF004D40</color>
-    <color name="premium_accent">#FF7C4DFF</color>
-    <color name="premium_accent_light">#FFB388FF</color>
-    <color name="premium_gradient_start">#FF00897B</color>
-    <color name="premium_gradient_end">#FF26A69A</color>
-    <color name="premium_gold">#FFFFAB40</color>
-    <color name="premium_silver">#FFB0BEC5</color>
-    <color name="splash_background">#FF1A2327</color>
-    <color name="card_background">#FFFAFAFA</color>
+    <!-- BMW ProTools Style - Black with Neon Green Theme -->
+    <color name="premium_primary">#FF00FF41</color>
+    <color name="premium_primary_dark">#FF00CC33</color>
+    <color name="premium_accent">#FF39FF14</color>
+    <color name="premium_accent_light">#FF7FFF00</color>
+    <color name="premium_gradient_start">#FF121212</color>
+    <color name="premium_gradient_end">#FF000000</color>
+    <color name="premium_gold">#FF00FF41</color>
+    <color name="premium_silver">#FF1A1A1A</color>
+    <color name="splash_background">#FF000000</color>
+    <color name="card_background">#FF1A1A1A</color>
+    
+    <!-- BMW ProTools Dark Theme Colors -->
+    <color name="protools_black">#FF000000</color>
+    <color name="protools_dark_gray">#FF121212</color>
+    <color name="protools_medium_gray">#FF1E1E1E</color>
+    <color name="protools_light_gray">#FF2D2D2D</color>
+    <color name="protools_neon_green">#FF00FF41</color>
+    <color name="protools_neon_green_dark">#FF00CC33</color>
+    <color name="protools_neon_green_light">#FF39FF14</color>
+    <color name="protools_text_primary">#FFFFFFFF</color>
+    <color name="protools_text_secondary">#FFB3B3B3</color>
 </resources>

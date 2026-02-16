@@ -13,6 +13,7 @@
         android:text="@string/apdu_console"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:textColor="@color/protools_neon_green"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,6 +23,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        app:boxStrokeColor="@color/protools_neon_green"
+        app:hintTextColor="@color/protools_neon_green"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/titleText">
@@ -32,7 +36,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/hint_apdu"
             android:fontFamily="monospace"
-            android:inputType="textNoSuggestions" />
+            android:inputType="textNoSuggestions"
+            android:textColor="@color/protools_text_primary" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
@@ -52,6 +57,8 @@
             android:layout_weight="1"
             android:layout_marginEnd="4dp"
             android:text="SELECT"
+            android:textColor="@color/protools_neon_green"
+            app:strokeColor="@color/protools_neon_green"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
         <Button
@@ -62,6 +69,8 @@
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:text="READ"
+            android:textColor="@color/protools_neon_green"
+            app:strokeColor="@color/protools_neon_green"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
         <Button
@@ -71,6 +80,8 @@
             android:layout_weight="1"
             android:layout_marginStart="4dp"
             android:text="GET DATA"
+            android:textColor="@color/protools_neon_green"
+            app:strokeColor="@color/protools_neon_green"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
     </LinearLayout>
 
@@ -92,6 +103,7 @@
         android:layout_marginTop="24dp"
         android:text="@string/apdu_response"
         android:textStyle="bold"
+        android:textColor="@color/protools_neon_green"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sendButton" />
 
@@ -110,7 +122,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="monospace"
             android:padding="12dp"
-            android:background="@color/background_light"
+            android:background="@color/protools_medium_gray"
+            android:textColor="@color/protools_neon_green"
             android:textIsSelectable="true" />
     </ScrollView>
 

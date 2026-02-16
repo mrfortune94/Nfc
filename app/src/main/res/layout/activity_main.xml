@@ -8,14 +8,16 @@
     android:padding="16dp"
     tools:context=".MainActivity">
 
-    <!-- Premium Card Container for Header -->
+    <!-- Premium Card Container for Header - Dark Theme -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/headerCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
-        app:cardBackgroundColor="@color/card_background"
+        app:cardBackgroundColor="@color/protools_medium_gray"
+        app:strokeColor="@color/protools_neon_green"
+        app:strokeWidth="1dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -33,7 +35,7 @@
                 android:text="@string/title_home"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                android:textColor="@color/premium_primary"
+                android:textColor="@color/protools_neon_green"
                 android:fontFamily="sans-serif-black"
                 android:layout_gravity="center_horizontal" />
 
@@ -54,7 +56,7 @@
                 android:text="@string/scan_prompt"
                 android:textAlignment="center"
                 android:textSize="16sp"
-                android:textColor="@color/premium_primary_dark"
+                android:textColor="@color/protools_text_secondary"
                 android:layout_gravity="center_horizontal" />
 
             <TextView
@@ -65,7 +67,7 @@
                 android:textSize="18sp"
                 android:gravity="center"
                 android:padding="16dp"
-                android:textColor="@color/premium_primary_dark" />
+                android:textColor="@color/protools_text_primary" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -93,7 +95,9 @@
                 android:visibility="gone"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/card_background">
+                app:cardBackgroundColor="@color/protools_medium_gray"
+                app:strokeColor="@color/protools_neon_green_dark"
+                app:strokeWidth="1dp">
 
                 <TextView
                     android:id="@+id/tagInfoText"
@@ -102,7 +106,7 @@
                     android:fontFamily="monospace"
                     android:padding="16dp"
                     android:textIsSelectable="true"
-                    android:textColor="@color/premium_primary_dark" />
+                    android:textColor="@color/protools_text_primary" />
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Button Container -->
@@ -130,8 +134,7 @@
                     android:layout_marginBottom="12dp"
                     android:text="@string/title_emulate"
                     app:icon="@android:drawable/ic_media_play"
-                    app:iconGravity="textStart"
-                    app:backgroundTint="@color/premium_accent" />
+                    app:iconGravity="textStart" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/backupManagerButton"
@@ -151,8 +154,7 @@
                     android:layout_marginBottom="12dp"
                     android:text="@string/title_protected"
                     app:icon="@android:drawable/ic_lock_lock"
-                    app:iconGravity="textStart"
-                    app:backgroundTint="#FF5722" />
+                    app:iconGravity="textStart" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/apduConsoleButton"
