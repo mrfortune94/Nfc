@@ -247,6 +247,16 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
             sb.append("\n\n=== EMV Contactless Card ===")
             sb.append("\nHistorical bytes: ${isoDep.historicalBytes?.toHexString() ?: "N/A"}")
             sb.append("\nMax transceive: ${isoDep.maxTransceiveLength} bytes")
+            isoDep.historicalBytes?.let {
+                decodeTlvSafe(it)?.let { tlv ->
+                    sb.append("\nHistorical TLV:\n$tlv")
+                }
+            }
+            isoDep.hiLayerResponse?.let {
+                decodeTlvSafe(it)?.let { tlv ->
+                    sb.append("\nHiLayer TLV:\n$tlv")
+                }
+            }
 
             val provider = NfcIsoDepProvider(isoDep)
             
@@ -288,17 +298,25 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
                 // Cardholder name (if present)
                 card.holderLastname?.let { lastName ->
                     val firstName = card.holderFirstname ?: ""
-                    sb.append("\nCardholder: $firstName $lastName".trim())
-                }
+                sb.append("\nCardholder: $firstName $lastName".trim())
+            }
 
-                // AID used (from applications list)
-                card.applications?.firstOrNull()?.aid?.let { aid ->
-                    sb.append("\nAID: ${aid.toHexString()}")
-                }
+            // AID used (from applications list)
+            card.applications?.firstOrNull()?.aid?.let { aid ->
+                sb.append("\nAID: ${aid.toHexString()}")
+            }
+
 
                 // Track 2 equivalent data
                 card.track2?.let { track2 ->
-                    sb.append("\nTrack 2: ${track2.raw?.toHexString() ?: "N/A"}")
+                    val raw = track2.raw
+                    sb.append("\nTrack 2: ${raw?.toHexString() ?: "N/A"}")
+                    raw?.let { parseTrack2(it) }?.let { parsed ->
+                        parsed.pan?.let { sb.append("\n  PAN: $it") }
+                        parsed.expiry?.let { sb.append("\n  Expiry (YYMM): $it") }
+                        parsed.serviceCode?.let { sb.append("\n  Service Code: $it") }
+                        parsed.discretionaryData?.let { sb.append("\n  Discretionary: $it") }
+                    }
                 }
 
                 Log.d(TAG, "EMV Card parsed successfully: ${card.type?.name}")
@@ -316,6 +334,99 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
         }
         
         return sb.toString()
+    }
+
+    private data class Track2Parsed(
+        val pan: String?,
+        val expiry: String?,
+        val serviceCode: String?,
+        val discretionaryData: String?
+    )
+
+    private fun parseTrack2(raw: ByteArray): Track2Parsed {
+        val digits = buildString {
+            raw.forEach { b ->
+                append(((b.toInt() shr 4) and 0x0F).toString(16).uppercase())
+                append((b.toInt() and 0x0F).toString(16).uppercase())
+            }
+        }
+        val sepIndex = digits.indexOfFirst { it == 'D' || it == 'd' }
+        val pan = if (sepIndex > 0) digits.substring(0, sepIndex) else digits.takeWhile { it.isDigit() }
+        var expiry: String? = null
+        var service: String? = null
+        var discretionary: String? = null
+
+        if (sepIndex in digits.indices) {
+            val afterSep = digits.substring(sepIndex + 1)
+            if (afterSep.length >= 4) {
+                expiry = afterSep.substring(0, 4) // YYMM
+            }
+            if (afterSep.length >= 7) {
+                service = afterSep.substring(4, 7)
+            }
+            if (afterSep.length > 7) {
+                discretionary = afterSep.substring(7)
+            }
+        }
+
+        return Track2Parsed(
+            pan = pan.ifBlank { null },
+            expiry = expiry,
+            serviceCode = service,
+            discretionaryData = discretionary
+        )
+    }
+
+    private fun decodeTlvSafe(data: ByteArray): String? {
+        return try {
+            decodeTlv(data)
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    // Simple TLV decoder; does not recurse into constructed tags.
+    private fun decodeTlv(data: ByteArray): String {
+        val sb = StringBuilder()
+        var index = 0
+        while (index < data.size) {
+            val tag = readTag(data, index)
+            index += tag.second
+            if (index >= data.size) break
+
+            val lenByte = data[index].toInt() and 0xFF
+            index++
+            val length: Int
+            if (lenByte and 0x80 == 0) {
+                length = lenByte
+            } else {
+                val numBytes = lenByte and 0x7F
+                if (index + numBytes > data.size) break
+                length = data.copyOfRange(index, index + numBytes).fold(0) { acc, b ->
+                    (acc shl 8) or (b.toInt() and 0xFF)
+                }
+                index += numBytes
+            }
+
+            if (index + length > data.size) break
+            val value = data.copyOfRange(index, index + length)
+            index += length
+
+            sb.append("Tag ${tag.first} (len=$length): ${value.toHexString()}\n")
+        }
+        return sb.toString().trimEnd()
+    }
+
+    private fun readTag(data: ByteArray, offset: Int): Pair<String, Int> {
+        var idx = offset
+        val first = data[idx].toInt() and 0xFF
+        idx++
+        if (first and 0x1F == 0x1F && idx < data.size) {
+            val second = data[idx].toInt() and 0xFF
+            idx++
+            return "%02X%02X".format(first, second) to (idx - offset)
+        }
+        return "%02X".format(first) to (idx - offset)
     }
     
     private fun showDisclaimerDialog(prefs: android.content.SharedPreferences) {
