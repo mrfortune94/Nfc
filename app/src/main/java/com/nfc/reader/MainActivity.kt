@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
     
     companion object {
         private const val TAG = "NFC_DEBUG"
+        private const val MAX_TOAST_LENGTH = 300
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,7 +85,7 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
         handleIncomingNfcIntent(intent)
     }
     
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         // This is CRITICAL for when app is already open
         setIntent(intent)
@@ -155,7 +156,15 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
                                 val payload = rec.payload
                                 if (payload != null && payload.isNotEmpty()) {
                                     val text = try {
-                                        String(payload.copyOfRange(minOf(3, payload.size), payload.size), Charset.forName("UTF-8"))
+                                        // NDEF text record: first byte is status (bit 7 = encoding, bits 5-0 = lang code length)
+                                        val statusByte = payload[0].toInt() and 0xFF
+                                        val langCodeLength = statusByte and 0x3F
+                                        val textOffset = 1 + langCodeLength
+                                        if (textOffset < payload.size) {
+                                            String(payload.copyOfRange(textOffset, payload.size), Charset.forName("UTF-8"))
+                                        } else {
+                                            payload.toHexString()
+                                        }
                                     } catch (_: Exception) {
                                         "Binary data"
                                     }
@@ -193,7 +202,7 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
             // Log and update UI
             Log.d(TAG, info)
             runOnUiThread {
-                Toast.makeText(this, info.take(300) + if (info.length > 300) "..." else "", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, info.take(MAX_TOAST_LENGTH) + if (info.length > MAX_TOAST_LENGTH) "..." else "", Toast.LENGTH_LONG).show()
                 findViewById<TextView>(R.id.nfc_status_text)?.text = info
                 
                 // Also process through the existing tag reader for full display

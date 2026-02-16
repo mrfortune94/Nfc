@@ -15,7 +15,7 @@ class NfcIsoDepProvider(private val isoDep: IsoDep) : IProvider {
         return try {
             isoDep.transceive(command)
         } catch (e: Exception) {
-            throw CommunicationException(e.message)
+            throw CommunicationException(e.message ?: "Communication failed")
         }
     }
 
