@@ -9,8 +9,12 @@
     <string name="waiting_for_nfc">Waiting for NFC tag…</string>
     <string name="nfc_not_supported">NFC is not supported on this device</string>
     <string name="nfc_disabled">NFC is disabled. Please enable it in Settings</string>
+    <string name="nfc_disabled_tap_to_enable">NFC is disabled. Tap here to open Settings</string>
     <string name="nfc_hardware_not_found">NFC hardware not found</string>
     <string name="nfc_is_off">NFC is OFF - enable it</string>
+    <string name="nfc_permission_info">This app requires NFC permission to read tags. The NFC permission was granted at install.</string>
+    <string name="open_nfc_settings">Open NFC Settings</string>
+    <string name="rfid_support_info">This app supports 13.56 MHz RFID/NFC tags (MIFARE, ISO 14443, ISO 15693). Low-frequency 125 kHz RFID tags cannot be read by standard Android phones.</string>
     
     <!-- Tag Reading -->
     <string name="tag_detected">Tag Detected!</string>

@@ -7,6 +7,7 @@ import android.nfc.tech.IsoDep
 import android.nfc.tech.MifareClassic
 import android.nfc.tech.Ndef
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.TextView
@@ -76,7 +77,10 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
         }
         
         if (!nfcAdapter!!.isEnabled) {
-            binding.statusText.text = getString(R.string.nfc_disabled)
+            binding.statusText.text = getString(R.string.nfc_disabled_tap_to_enable)
+            binding.statusText.setOnClickListener {
+                openNfcSettings()
+            }
         }
         
         setupUI()
@@ -101,7 +105,16 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
             Toast.makeText(this, getString(R.string.nfc_hardware_not_found), Toast.LENGTH_LONG).show()
             return
         } else if (!adapter.isEnabled) {
+            binding.statusText.text = getString(R.string.nfc_disabled_tap_to_enable)
+            binding.statusText.setOnClickListener {
+                openNfcSettings()
+            }
             Toast.makeText(this, getString(R.string.nfc_is_off), Toast.LENGTH_LONG).show()
+            return
+        } else {
+            // NFC is enabled, reset status text for normal operation
+            binding.statusText.text = getString(R.string.scan_prompt)
+            binding.statusText.setOnClickListener(null)
         }
         
         // Enable Reader Mode for all common NFC techs (more reliable than foreground dispatch)
@@ -471,6 +484,26 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
                 operation = "READ"
             )
             database.nfcLogDao().insert(log)
+        }
+    }
+    
+    /**
+     * Opens Android NFC settings so user can enable NFC
+     */
+    private fun openNfcSettings() {
+        try {
+            startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
+        } catch (e: Exception) {
+            // Fallback to general wireless settings if NFC settings not available
+            try {
+                startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
+            } catch (ex: Exception) {
+                Toast.makeText(
+                    this,
+                    "Unable to open settings. Please enable NFC manually in your device settings.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
     
