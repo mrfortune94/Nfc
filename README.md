@@ -88,11 +88,35 @@ A comprehensive Android NFC application for reading, writing, and emulating NFC 
 - **MifareClassic**
 - **MifareUltralight**
 
+## RFID Tag Support
+
+This app supports **13.56 MHz RFID/NFC tags** including:
+- ✅ MIFARE Classic (1K, 4K) - Common access cards
+- ✅ MIFARE Ultralight - Event tickets, transit cards
+- ✅ MIFARE DESFire - Secure access cards
+- ✅ ISO 14443-A/B - Proximity cards
+- ✅ ISO 15693 - Vicinity cards (longer range)
+- ✅ FeliCa - Japanese transit cards
+
+**Not Supported (Hardware Limitation):**
+- ❌ 125 kHz RFID tags (EM4100, HID ProxCard, T5577)
+- ❌ 134 kHz animal tracking chips
+
+> **Note:** Standard Android phones only have 13.56 MHz NFC hardware. Low-frequency 125 kHz RFID tags require specialized hardware that is not included in consumer smartphones.
+
 ## Requirements
 
 - Android device with NFC hardware
 - Android SDK 21 (Lollipop) or higher
 - NFC enabled in device settings
+
+## Permissions
+
+The app requires the following permissions:
+- **NFC Permission** (`android.permission.NFC`) - Granted automatically at install time
+- **Storage Permission** - For exporting logs (Android 9 and below only)
+
+> **Troubleshooting NFC:** If NFC is not reading tags, ensure NFC is enabled in your device settings. The app will prompt you to open NFC settings if it detects NFC is disabled.
 
 ## Installation
 
@@ -195,14 +219,21 @@ Contributions are welcome! Please feel free to submit pull requests.
 ## Troubleshooting
 
 ### NFC not working
-- Ensure NFC is enabled in device settings
-- Check app has NFC permissions
+- Ensure NFC is enabled in device settings (the app will prompt you to open settings)
+- The NFC permission is granted automatically at install - no runtime permission needed
 - Verify device has NFC hardware
+- Try restarting the app after enabling NFC
+
+### RFID tags not reading
+- Verify the tag operates at **13.56 MHz** (NFC frequency)
+- **125 kHz RFID tags cannot be read** by Android phones (hardware limitation)
+- Common 125 kHz tags that won't work: EM4100, HID ProxCard, T5577, animal chips
 
 ### Tags not detected
 - Hold device steady near tag
-- Try different tag positions
+- Try different tag positions (NFC antenna location varies by phone)
 - Some tags may be read-only or locked
+- Remove phone case if it's thick or metallic
 
 ### Writing fails
 - Check tag is writable (not read-only)
