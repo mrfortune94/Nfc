@@ -245,8 +245,23 @@ class ProtectedTagActivity : AppCompatActivity() {
     }
 
     private fun dumpAllSectors(tag: Tag, key: ByteArray) {
+        // Determine sector count based on card type
+        val mifare = android.nfc.tech.MifareClassic.get(tag)
+        val sectorCount = if (mifare != null) {
+            try {
+                mifare.connect()
+                val count = mifare.sectorCount
+                mifare.close()
+                count
+            } catch (e: Exception) {
+                16 // Default to 1K card
+            }
+        } else {
+            16 // Default to 1K card
+        }
+        
         // Create key map with same key for all sectors
-        val keyMap = (0..15).associate { sector ->
+        val keyMap = (0 until sectorCount).associate { sector ->
             sector to Pair(key, selectedKeyType)
         }
         

@@ -34,6 +34,11 @@ class BackupManagerActivity : AppCompatActivity() {
     
     private lateinit var backupAdapter: BackupAdapter
     private var pendingBackupName: String? = null
+    
+    companion object {
+        private val DATE_FORMAT = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault())
+        private const val EXPORT_REQUEST_CODE = 1001
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,7 +126,7 @@ class BackupManagerActivity : AppCompatActivity() {
             appendLine("Technologies: ${backup.technologies}")
             appendLine("Can Emulate: ${if (backup.canEmulate) "Yes" else "No"}")
             appendLine()
-            appendLine("Backed up: ${java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault()).format(java.util.Date(backup.timestamp))}")
+            appendLine("Backed up: ${DATE_FORMAT.format(java.util.Date(backup.timestamp))}")
         }
 
         AlertDialog.Builder(this)
@@ -160,7 +165,7 @@ class BackupManagerActivity : AppCompatActivity() {
         }
     }
 
-    private fun startEmulateActivity(backup: CardBackup) {
+    private fun startEmulateActivity(@Suppress("UNUSED_PARAMETER") backup: CardBackup) {
         val intent = Intent(this, EmulateCardActivity::class.java)
         // In a real implementation, pass the backup ID
         startActivity(intent)
@@ -174,15 +179,13 @@ class BackupManagerActivity : AppCompatActivity() {
                 return@launch
             }
 
-            val gson = com.google.gson.Gson()
-            val json = gson.toJson(backups)
-            
-            // Export to file
+            // Export to file using Storage Access Framework
             val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "application/json"
                 putExtra(Intent.EXTRA_TITLE, "nfc_backups_${System.currentTimeMillis()}.json")
             }
+            @Suppress("DEPRECATION")
             startActivityForResult(intent, EXPORT_REQUEST_CODE)
         }
     }
@@ -248,9 +251,5 @@ class BackupManagerActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
-    }
-
-    companion object {
-        private const val EXPORT_REQUEST_CODE = 1001
     }
 }
