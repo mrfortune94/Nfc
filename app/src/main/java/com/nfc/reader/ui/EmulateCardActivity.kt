@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.nfc.reader.R
 import com.nfc.reader.data.CardBackup
@@ -169,12 +170,12 @@ class EmulateCardActivity : AppCompatActivity() {
             binding.startEmulationButton.visibility = View.GONE
             binding.stopEmulationButton.visibility = View.VISIBLE
             binding.emulationStatusText.text = getString(R.string.emulation_active)
-            binding.emulationStatusText.setTextColor(getColor(R.color.nfc_green))
+            binding.emulationStatusText.setTextColor(ContextCompat.getColor(this, R.color.nfc_green))
         } else {
             binding.startEmulationButton.visibility = View.VISIBLE
             binding.stopEmulationButton.visibility = View.GONE
             binding.emulationStatusText.text = getString(R.string.emulation_inactive)
-            binding.emulationStatusText.setTextColor(getColor(R.color.premium_primary_dark))
+            binding.emulationStatusText.setTextColor(ContextCompat.getColor(this, R.color.premium_primary_dark))
         }
     }
 
