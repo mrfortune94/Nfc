@@ -16,6 +16,10 @@ import java.io.IOException
  */
 class CardBackupHandler {
     
+    companion object {
+        const val TECH_MIFARE_CLASSIC = "MifareClassic"
+    }
+    
     private val gson = Gson()
     
     data class BackupResult(
@@ -106,7 +110,7 @@ class CardBackupHandler {
                 cardType = getMifareType(mifare.type),
                 sectorData = gson.toJson(sectorData),
                 isoStandard = "ISO/IEC 14443-A",
-                technologies = "MifareClassic,NfcA",
+                technologies = "$TECH_MIFARE_CLASSIC,NfcA",
                 memorySize = mifare.size,
                 canEmulate = true // UID-based emulation enabled; full CRYPTO1 emulation requires hardware
             )

@@ -70,7 +70,7 @@ class EmulateCardActivity : AppCompatActivity() {
 
             if (selectedBackup?.canEmulate == true) {
                 // Check if this is a MIFARE Classic card and show warning
-                if (selectedBackup?.technologies?.contains("MifareClassic") == true) {
+                if (selectedBackup?.technologies?.contains(CardBackupHandler.TECH_MIFARE_CLASSIC) == true) {
                     showMifareClassicWarningDialog()
                 } else {
                     startEmulation()
