@@ -482,6 +482,11 @@ class MainActivity : AppCompatActivity(), NfcAdapter.ReaderCallback {
             tagInfo.applicationData?.let { appendLine("App Data (ISO 14443-B): $it") }
             tagInfo.dsfId?.let { appendLine("DSFID (ISO 15693): $it") }
             tagInfo.maxTransceiveLength?.let { appendLine("Max Transceive: $it bytes") }
+            if (tagInfo.isIsoDep) {
+                appendLine("\nISO-DEP (ISO 14443-4) Info:")
+                tagInfo.historicalBytes?.let { appendLine("  Historical Bytes: $it") }
+                tagInfo.hiLayerResponse?.let { appendLine("  HI-Layer Response: $it") }
+            }
             appendLine()
 
             tagInfo.memorySize?.let { appendLine("${getString(R.string.tag_size)} $it bytes") }

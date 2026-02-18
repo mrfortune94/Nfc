@@ -6,13 +6,20 @@ import java.nio.ByteBuffer
 
 /**
  * Enhanced EMV Deep Parser for contactless payment card analysis
+ * over ISO 14443-4 / ISO-DEP
  * 
  * Supports:
- * - PPSE (Proximity Payment System Environment)
+ * - PPSE (Proximity Payment System Environment) for contactless
+ * - PSE (Payment System Environment) for contact fallback
  * - Multiple payment AIDs (Visa, Mastercard, AMEX, etc.)
  * - TLV parsing with recursive structure
  * - Track2 equivalent parsing
  * - Application data extraction
+ * - PDOL (Processing Options DOL) parsing and construction
+ * - EMV response chaining (SW 61XX / 6CXX)
+ * - Application File Locator (AFL) based record reading
+ * - CVM List parsing
+ * - Application Interchange Profile (AIP) decoding
  * 
  * IMPORTANT: For educational/research purposes only.
  * Always use with your own cards.
@@ -130,6 +137,115 @@ class EmvDeepParser(private val isoDep: IsoDep) {
             "DF8101" to "Kernel ID",
             "DF8102" to "CTQ"
         )
+
+        /**
+         * Known PDOL tag lengths for constructing default PDOL data
+         */
+        val PDOL_TAG_LENGTHS = mapOf(
+            "9F66" to 4,  // Terminal Transaction Qualifiers (TTQ)
+            "9F02" to 6,  // Amount Authorized
+            "9F03" to 6,  // Amount Other
+            "9F1A" to 2,  // Terminal Country Code
+            "5F2A" to 2,  // Transaction Currency Code
+            "9A" to 3,    // Transaction Date
+            "9C" to 1,    // Transaction Type
+            "9F37" to 4,  // Unpredictable Number
+            "9F35" to 1,  // Terminal Type
+            "9F45" to 2,  // Data Authentication Code
+            "9F4E" to 20, // Merchant Name and Location
+            "9F34" to 3,  // CVM Results
+            "9F21" to 3,  // Transaction Time
+            "9F33" to 3,  // Terminal Capabilities
+            "9F40" to 5,  // Additional Terminal Capabilities
+            "9F09" to 2,  // Application Version Number (Terminal)
+            "9F15" to 2,  // Merchant Category Code
+            "9F16" to 15, // Merchant Identifier
+            "9F1C" to 8,  // Terminal Identification
+            "9F1E" to 8   // Interface Device Serial Number
+        )
+
+        /**
+         * Decode Application Interchange Profile (AIP) bits
+         */
+        fun decodeAip(aip: ByteArray): List<String> {
+            if (aip.size < 2) return listOf("Invalid AIP")
+            val features = mutableListOf<String>()
+            val byte1 = aip[0].toInt() and 0xFF
+            val byte2 = aip[1].toInt() and 0xFF
+            
+            if (byte1 and 0x40 != 0) features.add("SDA supported")
+            if (byte1 and 0x20 != 0) features.add("DDA supported")
+            if (byte1 and 0x10 != 0) features.add("Cardholder verification supported")
+            if (byte1 and 0x08 != 0) features.add("Terminal risk management required")
+            if (byte1 and 0x04 != 0) features.add("Issuer authentication supported")
+            if (byte1 and 0x01 != 0) features.add("CDA supported")
+            if (byte2 and 0x80 != 0) features.add("MSD supported (magnetic stripe)")
+            if (byte2 and 0x40 != 0) features.add("Relay resistance protocol supported")
+            
+            if (features.isEmpty()) features.add("No special capabilities")
+            return features
+        }
+
+        /**
+         * Parse CVM (Cardholder Verification Method) List
+         */
+        fun parseCvmList(data: ByteArray): List<String> {
+            val methods = mutableListOf<String>()
+            if (data.size < 8) return listOf("Invalid CVM List")
+            
+            // First 4 bytes: Amount X, next 4 bytes: Amount Y
+            val amountX = ((data[0].toInt() and 0xFF) shl 24) or 
+                         ((data[1].toInt() and 0xFF) shl 16) or 
+                         ((data[2].toInt() and 0xFF) shl 8) or 
+                         (data[3].toInt() and 0xFF)
+            val amountY = ((data[4].toInt() and 0xFF) shl 24) or 
+                         ((data[5].toInt() and 0xFF) shl 16) or 
+                         ((data[6].toInt() and 0xFF) shl 8) or 
+                         (data[7].toInt() and 0xFF)
+            
+            methods.add("Amount X: $amountX, Amount Y: $amountY")
+            
+            // CVM rules: pairs of bytes
+            var i = 8
+            while (i + 1 < data.size) {
+                val cvmCode = data[i].toInt() and 0xFF
+                val conditionCode = data[i + 1].toInt() and 0xFF
+                
+                val method = when (cvmCode and 0x3F) {
+                    0x00 -> "Fail CVM processing"
+                    0x01 -> "Plaintext PIN verification by ICC"
+                    0x02 -> "Enciphered PIN verified online"
+                    0x03 -> "Plaintext PIN by ICC + signature"
+                    0x04 -> "Enciphered PIN by ICC"
+                    0x05 -> "Enciphered PIN by ICC + signature"
+                    0x1E -> "Signature (paper)"
+                    0x1F -> "No CVM required"
+                    0x20 -> "No CVM required (amount confirmed)"
+                    else -> "RFU/Unknown (${String.format("%02X", cvmCode and 0x3F)})"
+                }
+                
+                val failAction = if (cvmCode and 0x40 != 0) "apply next if unsuccessful" else "fail on unsuccessful"
+                
+                val condition = when (conditionCode) {
+                    0x00 -> "Always"
+                    0x01 -> "If unattended cash"
+                    0x02 -> "If not (unattended cash/manual cash/purchase with cashback)"
+                    0x03 -> "If terminal supports CVM"
+                    0x04 -> "If manual cash"
+                    0x05 -> "If purchase with cashback"
+                    0x06 -> "If transaction is in application currency and under X"
+                    0x07 -> "If transaction is in application currency and over X"
+                    0x08 -> "If transaction is in application currency and under Y"
+                    0x09 -> "If transaction is in application currency and over Y"
+                    else -> "RFU/Unknown (${String.format("%02X", conditionCode)})"
+                }
+                
+                methods.add("  $method ($failAction) - $condition")
+                i += 2
+            }
+            
+            return methods
+        }
     }
 
     data class EmvResult(
@@ -148,19 +264,30 @@ class EmvDeepParser(private val isoDep: IsoDep) {
             isoDep.timeout = 15000
             if (!isoDep.isConnected) isoDep.connect()
 
-            sb.append("=== EMV Deep Read ===\n\n")
+            sb.append("=== EMV Deep Read (ISO 14443-4 / ISO-DEP) ===\n\n")
+            
+            // Show connection info
+            val histBytes = isoDep.historicalBytes
+            val hiLayer = isoDep.hiLayerResponse
+            if (histBytes != null) {
+                sb.append("Historical Bytes (NFC-A): ${histBytes.toHex()}\n")
+            }
+            if (hiLayer != null) {
+                sb.append("HI-Layer Response (NFC-B): ${hiLayer.toHex()}\n")
+            }
+            sb.append("Max Transceive Length: ${isoDep.maxTransceiveLength}\n\n")
 
             // Try PPSE first (contactless)
             val ppseResp = transceive(buildSelectCommand(PPSE_AID), sb)
-            if (isSuccess(ppseResp)) {
-                sb.append("✓ PPSE Selected\n")
-                parseTlv(ppseResp.dropLast(2).toByteArray(), sb, "  ")
+            if (isSuccessOrMoreData(ppseResp)) {
+                sb.append("✓ PPSE Selected (contactless mode)\n")
+                parseTlv(getResponseData(ppseResp), sb, "  ")
             } else {
                 // Try PSE (contact)
                 val pseResp = transceive(buildSelectCommand(PSE_AID), sb)
-                if (isSuccess(pseResp)) {
-                    sb.append("✓ PSE Selected\n")
-                    parseTlv(pseResp.dropLast(2).toByteArray(), sb, "  ")
+                if (isSuccessOrMoreData(pseResp)) {
+                    sb.append("✓ PSE Selected (contact mode)\n")
+                    parseTlv(getResponseData(pseResp), sb, "  ")
                 }
             }
 
@@ -172,15 +299,34 @@ class EmvDeepParser(private val isoDep: IsoDep) {
             for ((name, aidHex) in COMMON_AIDS) {
                 val aid = aidHex.decodeHex()
                 val resp = transceive(buildSelectCommand(aid), sb)
-                if (isSuccess(resp)) {
+                if (isSuccessOrMoreData(resp)) {
                     selectedAidName = name
                     sb.append("\n✓ $name ($aidHex) SELECTED\n")
-                    parseTlv(resp.dropLast(2).toByteArray(), sb, "  ")
                     
-                    // Get Processing Options
-                    readGpo(sb)
+                    val fciData = getResponseData(resp)
+                    val fciTags = mutableMapOf<String, String>()
+                    extractTags(fciData, fciTags)
+                    parseTlv(fciData, sb, "  ")
                     
-                    // Read records
+                    // Decode AIP if present
+                    fciTags["82"]?.let { aipHex ->
+                        val aipBytes = aipHex.decodeHex()
+                        sb.append("\n  AIP Capabilities:\n")
+                        decodeAip(aipBytes).forEach { sb.append("    • $it\n") }
+                    }
+                    
+                    // Parse PDOL if present and use it for GPO
+                    val pdolData = fciTags["9F38"]?.let { pdolHex ->
+                        sb.append("\n  PDOL requested by card:\n")
+                        val pdolBytes = pdolHex.decodeHex()
+                        parsePdol(pdolBytes, sb)
+                        buildDefaultPdolData(pdolBytes)
+                    } ?: byteArrayOf()
+                    
+                    // Get Processing Options with PDOL data
+                    readGpo(sb, pdolData)
+                    
+                    // Read records using AFL from GPO or brute-force
                     dumpRecords(sb)
                     
                     // Try to get specific data
@@ -214,36 +360,66 @@ class EmvDeepParser(private val isoDep: IsoDep) {
             isoDep.timeout = 15000
 
             // Select PPSE
-            val ppseResp = isoDep.transceive(buildSelectCommand(PPSE_AID))
-            if (isSuccess(ppseResp)) {
+            val ppseResp = transceiveRaw(buildSelectCommand(PPSE_AID))
+            if (isSuccessOrMoreData(ppseResp)) {
                 rawData.append("PPSE: ${ppseResp.toHex()}\n")
-                extractTags(ppseResp.dropLast(2).toByteArray(), parsedTags)
+                extractTags(getResponseData(ppseResp), parsedTags)
             }
 
             // Try AIDs
             for ((name, aidHex) in COMMON_AIDS) {
                 val aid = aidHex.decodeHex()
-                val resp = isoDep.transceive(buildSelectCommand(aid))
-                if (isSuccess(resp)) {
+                val resp = transceiveRaw(buildSelectCommand(aid))
+                if (isSuccessOrMoreData(resp)) {
                     cardBrand = name
                     rawData.append("AID $name: ${resp.toHex()}\n")
-                    extractTags(resp.dropLast(2).toByteArray(), parsedTags)
+                    
+                    val fciTags = mutableMapOf<String, String>()
+                    extractTags(getResponseData(resp), fciTags)
+                    parsedTags.putAll(fciTags)
 
-                    // GPO
-                    val gpoResp = isoDep.transceive("80A8000002830000".decodeHex())
-                    if (isSuccess(gpoResp)) {
+                    // Parse PDOL and build GPO data
+                    val pdolData = fciTags["9F38"]?.let { pdolHex ->
+                        buildDefaultPdolData(pdolHex.decodeHex())
+                    } ?: byteArrayOf()
+
+                    // GPO with PDOL
+                    val gpoCommandData = byteArrayOf(0x83.toByte(), pdolData.size.toByte()) + pdolData
+                    val gpoCmd = byteArrayOf(
+                        0x80.toByte(), 0xA8.toByte(), 0x00, 0x00,
+                        gpoCommandData.size.toByte()
+                    ) + gpoCommandData + byteArrayOf(0x00)
+                    
+                    val gpoResp = transceiveRaw(gpoCmd)
+                    if (isSuccessOrMoreData(gpoResp)) {
                         rawData.append("GPO: ${gpoResp.toHex()}\n")
-                        extractTags(gpoResp.dropLast(2).toByteArray(), parsedTags)
-                    }
-
-                    // Read records
-                    for (sfi in 1..10) {
-                        for (rec in 1..5) {
-                            val p2 = (sfi shl 3) or 0x04
-                            val readCmd = byteArrayOf(0x00, 0xB2.toByte(), rec.toByte(), p2.toByte(), 0x00)
-                            val recResp = isoDep.transceive(readCmd)
-                            if (isSuccess(recResp)) {
-                                extractTags(recResp.dropLast(2).toByteArray(), parsedTags)
+                        val gpoData = getResponseData(gpoResp)
+                        extractTags(gpoData, parsedTags)
+                        
+                        // Parse AFL from GPO response for targeted record reading
+                        val aflEntries = parseAflFromGpo(gpoData)
+                        if (aflEntries.isNotEmpty()) {
+                            for ((sfi, firstRec, lastRec) in aflEntries) {
+                                for (rec in firstRec..lastRec) {
+                                    val p2 = (sfi shl 3) or 0x04
+                                    val readCmd = byteArrayOf(0x00, 0xB2.toByte(), rec.toByte(), p2.toByte(), 0x00)
+                                    val recResp = transceiveRaw(readCmd)
+                                    if (isSuccessOrMoreData(recResp)) {
+                                        extractTags(getResponseData(recResp), parsedTags)
+                                    }
+                                }
+                            }
+                        } else {
+                            // Fallback: brute-force read records
+                            for (sfi in 1..10) {
+                                for (rec in 1..5) {
+                                    val p2 = (sfi shl 3) or 0x04
+                                    val readCmd = byteArrayOf(0x00, 0xB2.toByte(), rec.toByte(), p2.toByte(), 0x00)
+                                    val recResp = transceiveRaw(readCmd)
+                                    if (isSuccessOrMoreData(recResp)) {
+                                        extractTags(getResponseData(recResp), parsedTags)
+                                    }
+                                }
                             }
                         }
                     }
@@ -292,16 +468,111 @@ class EmvDeepParser(private val isoDep: IsoDep) {
         return byteArrayOf(0x00, 0xA4.toByte(), 0x04, 0x00, aid.size.toByte()) + aid + byteArrayOf(0x00)
     }
 
-    private fun readGpo(sb: StringBuilder) {
+    private fun readGpo(sb: StringBuilder, pdolData: ByteArray = byteArrayOf()) {
         sb.append("\n=== Get Processing Options ===\n")
         
-        // Simple GPO with empty PDOL
-        val gpoCmd = "80A8000002830000".decodeHex()
+        // GPO with PDOL data wrapped in tag 83
+        val commandData = byteArrayOf(0x83.toByte(), pdolData.size.toByte()) + pdolData
+        val gpoCmd = byteArrayOf(
+            0x80.toByte(), 0xA8.toByte(), 0x00, 0x00,
+            commandData.size.toByte()
+        ) + commandData + byteArrayOf(0x00)
+        
         val gpoResp = transceive(gpoCmd, sb)
-        if (isSuccess(gpoResp)) {
+        if (isSuccessOrMoreData(gpoResp)) {
             sb.append("GPO Response:\n")
-            parseTlv(gpoResp.dropLast(2).toByteArray(), sb, "  ")
+            val gpoData = getResponseData(gpoResp)
+            parseTlv(gpoData, sb, "  ")
+            
+            // Parse AIP from GPO response
+            val gpoTags = mutableMapOf<String, String>()
+            extractTags(gpoData, gpoTags)
+            
+            gpoTags["82"]?.let { aipHex ->
+                val aipBytes = aipHex.decodeHex()
+                sb.append("\n  AIP Capabilities:\n")
+                decodeAip(aipBytes).forEach { sb.append("    • $it\n") }
+            }
+            
+            // Parse AFL and show targeted records
+            val aflEntries = parseAflFromGpo(gpoData)
+            if (aflEntries.isNotEmpty()) {
+                sb.append("\n  AFL Entries (targeted records):\n")
+                for ((sfi, firstRec, lastRec) in aflEntries) {
+                    sb.append("    SFI $sfi: records $firstRec to $lastRec\n")
+                }
+            }
         }
+    }
+
+    /**
+     * Parse Application File Locator (AFL) entries from GPO response.
+     * Returns list of (sfi, firstRecord, lastRecord) triples.
+     */
+    private fun parseAflFromGpo(gpoData: ByteArray): List<Triple<Int, Int, Int>> {
+        val entries = mutableListOf<Triple<Int, Int, Int>>()
+        val tags = mutableMapOf<String, String>()
+        extractTags(gpoData, tags)
+        
+        // AFL is in tag 94
+        val aflHex = tags["94"] ?: return entries
+        val afl = aflHex.decodeHex()
+        
+        // AFL is 4 bytes per entry: SFI(1) | FirstRecord(1) | LastRecord(1) | ODARecords(1)
+        var i = 0
+        while (i + 3 < afl.size) {
+            val sfi = (afl[i].toInt() and 0xF8) shr 3
+            val firstRec = afl[i + 1].toInt() and 0xFF
+            val lastRec = afl[i + 2].toInt() and 0xFF
+            if (sfi in 1..30 && firstRec in 1..255 && lastRec >= firstRec) {
+                entries.add(Triple(sfi, firstRec, lastRec))
+            }
+            i += 4
+        }
+        
+        return entries
+    }
+
+    /**
+     * Parse PDOL (Processing Options Data Object List) and display requested tags.
+     */
+    private fun parsePdol(pdolBytes: ByteArray, sb: StringBuilder) {
+        var pos = 0
+        while (pos < pdolBytes.size) {
+            val (tag, tLen) = readTag(pdolBytes, pos)
+            pos += tLen
+            if (pos >= pdolBytes.size) break
+            
+            val length = pdolBytes[pos].toInt() and 0xFF
+            pos++
+            
+            val tagHex = tag.toHex()
+            val tagName = EMV_TAGS[tagHex] ?: "Unknown"
+            sb.append("    $tagHex ($tagName) - $length bytes\n")
+        }
+    }
+
+    /**
+     * Build default PDOL data based on the PDOL from the card's FCI.
+     * Fills in zero/default values for requested terminal data objects.
+     */
+    private fun buildDefaultPdolData(pdolBytes: ByteArray): ByteArray {
+        val result = mutableListOf<Byte>()
+        var pos = 0
+        
+        while (pos < pdolBytes.size) {
+            val (tag, tLen) = readTag(pdolBytes, pos)
+            pos += tLen
+            if (pos >= pdolBytes.size) break
+            
+            val length = pdolBytes[pos].toInt() and 0xFF
+            pos++
+            
+            // Fill with zeros (safe default for educational/testing use)
+            repeat(length) { result.add(0x00) }
+        }
+        
+        return result.toByteArray()
     }
 
     private fun dumpRecords(sb: StringBuilder) {
@@ -312,9 +583,18 @@ class EmvDeepParser(private val isoDep: IsoDep) {
                 val p2 = (sfi shl 3) or 0x04
                 val cmd = byteArrayOf(0x00, 0xB2.toByte(), rec.toByte(), p2.toByte(), 0x00)
                 val data = transceive(cmd, sb)
-                if (isSuccess(data)) {
+                if (isSuccessOrMoreData(data)) {
                     sb.append("SFI $sfi REC $rec:\n")
-                    parseTlv(data.dropLast(2).toByteArray(), sb, "  ")
+                    val recData = getResponseData(data)
+                    parseTlv(recData, sb, "  ")
+                    
+                    // Check for CVM List in this record
+                    val recTags = mutableMapOf<String, String>()
+                    extractTags(recData, recTags)
+                    recTags["8E"]?.let { cvmHex ->
+                        sb.append("  CVM List:\n")
+                        parseCvmList(cvmHex.decodeHex()).forEach { sb.append("    $it\n") }
+                    }
                 }
             }
         }
@@ -331,7 +611,11 @@ class EmvDeepParser(private val isoDep: IsoDep) {
             "9F17" to "PIN Try Counter",
             "9F36" to "ATC",
             "9F13" to "Last Online ATC",
-            "9F4F" to "Log Format"
+            "9F4F" to "Log Format",
+            "9F4D" to "Log Entry",
+            "9F08" to "Application Version Number",
+            "9F42" to "Application Currency Code",
+            "9F44" to "Application Currency Exponent"
         )
         
         for ((tag, name) in tags) {
@@ -340,8 +624,8 @@ class EmvDeepParser(private val isoDep: IsoDep) {
             val p2 = tagBytes.last()
             val cmd = byteArrayOf(0x80.toByte(), 0xCA.toByte(), p1, p2, 0x00)
             val resp = transceive(cmd, sb)
-            if (isSuccess(resp)) {
-                val value = resp.dropLast(2).toByteArray()
+            if (isSuccessOrMoreData(resp)) {
+                val value = getResponseData(resp)
                 sb.append("$name ($tag): ${value.toHex()}\n")
                 
                 // Parse specific values (use case-insensitive F removal for BCD padding)
@@ -386,6 +670,14 @@ class EmvDeepParser(private val isoDep: IsoDep) {
                         "5A" -> sb.append("$indent  → PAN: ${value.toHex().replace(Regex("[Ff]"), "")}\n")
                         "5F24" -> sb.append("$indent  → Expiry: ${formatExpiry(value.toHex())}\n")
                         "57" -> parseTrack2Enhanced(value, StringBuilder().also { sb.append(it) })
+                        "82" -> {
+                            sb.append("$indent  AIP:\n")
+                            decodeAip(value).forEach { sb.append("$indent    • $it\n") }
+                        }
+                        "8E" -> {
+                            sb.append("$indent  CVM List:\n")
+                            parseCvmList(value).forEach { sb.append("$indent    $it\n") }
+                        }
                     }
                 }
 
@@ -451,11 +743,35 @@ class EmvDeepParser(private val isoDep: IsoDep) {
         return result
     }
 
+    /**
+     * Transceive with logging and EMV response chaining support
+     */
     private fun transceive(cmd: ByteArray, sb: StringBuilder): ByteArray {
         Log.d(TAG, "→ ${cmd.toHex()}")
         return try {
-            val r = isoDep.transceive(cmd)
+            var r = isoDep.transceive(cmd)
             Log.d(TAG, "← ${r.toHex()}")
+            
+            // Handle response chaining
+            while (r.size >= 2) {
+                val sw1 = r[r.size - 2].toInt() and 0xFF
+                val sw2 = r[r.size - 1].toInt() and 0xFF
+                
+                if (sw1 == 0x61) {
+                    // GET RESPONSE for remaining data
+                    val getResp = byteArrayOf(0x00, 0xC0.toByte(), 0x00, 0x00, sw2.toByte())
+                    val next = isoDep.transceive(getResp)
+                    r = r.copyOfRange(0, r.size - 2) + next
+                } else if (sw1 == 0x6C) {
+                    // Wrong Le, re-send with correct Le
+                    val corrected = cmd.copyOf()
+                    corrected[corrected.size - 1] = sw2.toByte()
+                    r = isoDep.transceive(corrected)
+                } else {
+                    break
+                }
+            }
+            
             r
         } catch (e: Exception) {
             Log.e(TAG, "transceive fail", e)
@@ -463,10 +779,52 @@ class EmvDeepParser(private val isoDep: IsoDep) {
         }
     }
 
-    private fun isSuccess(resp: ByteArray): Boolean {
-        return resp.size >= 2 && 
-               resp[resp.size - 2].toInt() and 0xFF == 0x90 && 
-               resp.last().toInt() and 0xFF == 0x00
+    /**
+     * Raw transceive with EMV response chaining (no logging StringBuilder)
+     */
+    private fun transceiveRaw(cmd: ByteArray): ByteArray {
+        return try {
+            var r = isoDep.transceive(cmd)
+            
+            while (r.size >= 2) {
+                val sw1 = r[r.size - 2].toInt() and 0xFF
+                val sw2 = r[r.size - 1].toInt() and 0xFF
+                
+                if (sw1 == 0x61) {
+                    val getResp = byteArrayOf(0x00, 0xC0.toByte(), 0x00, 0x00, sw2.toByte())
+                    val next = isoDep.transceive(getResp)
+                    r = r.copyOfRange(0, r.size - 2) + next
+                } else if (sw1 == 0x6C) {
+                    val corrected = cmd.copyOf()
+                    corrected[corrected.size - 1] = sw2.toByte()
+                    r = isoDep.transceive(corrected)
+                } else {
+                    break
+                }
+            }
+            
+            r
+        } catch (e: Exception) {
+            Log.e(TAG, "transceive fail", e)
+            byteArrayOf(0x6F.toByte(), 0x00)
+        }
+    }
+
+    /**
+     * Check if response indicates success (9000) or more data available (61XX)
+     */
+    private fun isSuccessOrMoreData(resp: ByteArray): Boolean {
+        if (resp.size < 2) return false
+        val sw1 = resp[resp.size - 2].toInt() and 0xFF
+        val sw2 = resp.last().toInt() and 0xFF
+        return (sw1 == 0x90 && sw2 == 0x00) || sw1 == 0x61
+    }
+
+    /**
+     * Get the data portion of a response (without status word bytes)
+     */
+    private fun getResponseData(resp: ByteArray): ByteArray {
+        return if (resp.size > 2) resp.copyOfRange(0, resp.size - 2) else byteArrayOf()
     }
 
     private fun readTag(data: ByteArray, offset: Int): Pair<ByteArray, Int> {

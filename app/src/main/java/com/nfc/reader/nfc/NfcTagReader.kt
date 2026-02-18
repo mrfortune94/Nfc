@@ -25,7 +25,10 @@ class NfcTagReader {
         val maxTransceiveLength: Int? = null,
         val memorySize: Int? = null,
         val isWritable: Boolean = false,
-        val ndefInfo: NdefInfo? = null
+        val ndefInfo: NdefInfo? = null,
+        val isIsoDep: Boolean = false,
+        val historicalBytes: String? = null,
+        val hiLayerResponse: String? = null
     ) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -48,6 +51,9 @@ class NfcTagReader {
             if (memorySize != other.memorySize) return false
             if (isWritable != other.isWritable) return false
             if (ndefInfo != other.ndefInfo) return false
+            if (isIsoDep != other.isIsoDep) return false
+            if (historicalBytes != other.historicalBytes) return false
+            if (hiLayerResponse != other.hiLayerResponse) return false
             
             return true
         }
@@ -65,6 +71,9 @@ class NfcTagReader {
             result = 31 * result + (memorySize ?: 0)
             result = 31 * result + isWritable.hashCode()
             result = 31 * result + (ndefInfo?.hashCode() ?: 0)
+            result = 31 * result + isIsoDep.hashCode()
+            result = 31 * result + (historicalBytes?.hashCode() ?: 0)
+            result = 31 * result + (hiLayerResponse?.hashCode() ?: 0)
             return result
         }
     }
@@ -96,6 +105,9 @@ class NfcTagReader {
         var memorySize: Int? = null
         var isWritable = false
         var ndefInfo: NdefInfo? = null
+        var isIsoDep = false
+        var historicalBytes: String? = null
+        var hiLayerResponse: String? = null
         
         // ISO 14443-A specific
         if (techList.contains("android.nfc.tech.NfcA")) {
@@ -113,6 +125,17 @@ class NfcTagReader {
             nfcB?.use {
                 applicationData = it.applicationData?.toHexString()
                 maxTransceiveLength = it.maxTransceiveLength
+            }
+        }
+        
+        // ISO 14443-4 / ISO-DEP specific (EMV contactless cards)
+        if (techList.contains("android.nfc.tech.IsoDep")) {
+            val iso = IsoDep.get(tag)
+            iso?.use {
+                isIsoDep = true
+                maxTransceiveLength = it.maxTransceiveLength
+                historicalBytes = it.historicalBytes?.toHexString()
+                hiLayerResponse = it.hiLayerResponse?.toHexString()
             }
         }
         
@@ -169,19 +192,29 @@ class NfcTagReader {
             maxTransceiveLength = maxTransceiveLength,
             memorySize = memorySize,
             isWritable = isWritable,
-            ndefInfo = ndefInfo
+            ndefInfo = ndefInfo,
+            isIsoDep = isIsoDep,
+            historicalBytes = historicalBytes,
+            hiLayerResponse = hiLayerResponse
         )
     }
     
     private fun determineIsoStandard(techList: List<String>): Pair<String, String> {
+        val hasIsoDep = techList.contains("android.nfc.tech.IsoDep")
+        val hasNfcA = techList.contains("android.nfc.tech.NfcA")
+        val hasNfcB = techList.contains("android.nfc.tech.NfcB")
+        
         return when {
-            techList.contains("android.nfc.tech.NfcA") -> "ISO/IEC 14443-A" to "Type A"
-            techList.contains("android.nfc.tech.NfcB") -> "ISO/IEC 14443-B" to "Type B"
+            // EMV contactless cards: ISO-DEP over NfcA or NfcB
+            hasIsoDep && hasNfcA -> "ISO/IEC 14443-4 (ISO-DEP) over 14443-A" to "EMV / ISO-DEP Type A"
+            hasIsoDep && hasNfcB -> "ISO/IEC 14443-4 (ISO-DEP) over 14443-B" to "EMV / ISO-DEP Type B"
+            hasIsoDep -> "ISO/IEC 14443-4 / ISO 7816" to "ISO-DEP"
+            hasNfcA && techList.contains("android.nfc.tech.MifareClassic") -> "ISO/IEC 14443-A" to "Mifare Classic"
+            hasNfcA && techList.contains("android.nfc.tech.MifareUltralight") -> "ISO/IEC 14443-A" to "Mifare Ultralight"
+            hasNfcA -> "ISO/IEC 14443-A" to "Type A"
+            hasNfcB -> "ISO/IEC 14443-B" to "Type B"
             techList.contains("android.nfc.tech.NfcF") -> "ISO/IEC 18092" to "Type F (FeliCa)"
             techList.contains("android.nfc.tech.NfcV") -> "ISO/IEC 15693" to "Type V (Vicinity)"
-            techList.contains("android.nfc.tech.IsoDep") -> "ISO/IEC 14443-4 / ISO 7816" to "ISO-DEP"
-            techList.contains("android.nfc.tech.MifareClassic") -> "ISO/IEC 14443-A" to "Mifare Classic"
-            techList.contains("android.nfc.tech.MifareUltralight") -> "ISO/IEC 14443-A" to "Mifare Ultralight"
             else -> "Unknown" to "Unknown"
         }
     }
