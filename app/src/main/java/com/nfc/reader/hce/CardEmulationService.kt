@@ -8,6 +8,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.nfc.reader.utils.toHexString
+import java.security.SecureRandom
 
 /**
  * Host-based Card Emulation (HCE) Service
@@ -252,8 +253,9 @@ class CardEmulationService : HostApduService() {
     private fun handleGetChallenge(apdu: ByteArray): ByteArray {
         Log.d(TAG, "GET CHALLENGE")
         
-        // Generate random challenge
-        val challenge = ByteArray(8) { (Math.random() * 256).toInt().toByte() }
+        // Generate cryptographically secure random challenge
+        val challenge = ByteArray(8)
+        SecureRandom().nextBytes(challenge)
         return challenge + STATUS_SUCCESS.hexToByteArray()
     }
     

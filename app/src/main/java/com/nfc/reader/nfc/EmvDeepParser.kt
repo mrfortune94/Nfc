@@ -252,8 +252,8 @@ class EmvDeepParser(private val isoDep: IsoDep) {
                 }
             }
 
-            // Extract key fields
-            pan = parsedTags["5A"]?.replace("F", "")
+            // Extract key fields (use case-insensitive F removal for BCD padding)
+            pan = parsedTags["5A"]?.replace(Regex("[Ff]"), "")
             expiry = parsedTags["5F24"]?.let { formatExpiry(it) }
             cardholderName = parsedTags["5F20"]?.let { hexToAscii(it).trim() }
 
@@ -344,9 +344,9 @@ class EmvDeepParser(private val isoDep: IsoDep) {
                 val value = resp.dropLast(2).toByteArray()
                 sb.append("$name ($tag): ${value.toHex()}\n")
                 
-                // Parse specific values
+                // Parse specific values (use case-insensitive F removal for BCD padding)
                 when (tag) {
-                    "5A" -> sb.append("  → PAN: ${value.toHex().replace("F", "")}\n")
+                    "5A" -> sb.append("  → PAN: ${value.toHex().replace(Regex("[Ff]"), "")}\n")
                     "5F24" -> sb.append("  → Expiry: ${formatExpiry(value.toHex())}\n")
                     "5F20" -> sb.append("  → Name: ${hexToAscii(value.toHex())}\n")
                     "57" -> parseTrack2Enhanced(value, sb)
@@ -380,10 +380,10 @@ class EmvDeepParser(private val isoDep: IsoDep) {
                 if ((tag[0].toInt() and 0x20) != 0) {
                     parseTlv(value, sb, "$indent  ")
                 } else {
-                    // Try to decode known values
+                    // Try to decode known values (use case-insensitive F removal for BCD padding)
                     when (tagHex) {
                         "50", "5F20", "9F12" -> sb.append("$indent  → ${hexToAscii(value.toHex())}\n")
-                        "5A" -> sb.append("$indent  → PAN: ${value.toHex().replace("F", "")}\n")
+                        "5A" -> sb.append("$indent  → PAN: ${value.toHex().replace(Regex("[Ff]"), "")}\n")
                         "5F24" -> sb.append("$indent  → Expiry: ${formatExpiry(value.toHex())}\n")
                         "57" -> parseTrack2Enhanced(value, StringBuilder().also { sb.append(it) })
                     }
@@ -438,7 +438,8 @@ class EmvDeepParser(private val isoDep: IsoDep) {
         val sep = digits.indexOf('D')
         
         if (sep > 0) {
-            result["pan"] = digits.substring(0, sep).replace("F", "")
+            // Use case-insensitive F removal for BCD padding
+            result["pan"] = digits.substring(0, sep).replace(Regex("[Ff]"), "")
             val rest = digits.substring(sep + 1)
             if (rest.length >= 4) {
                 result["expiry"] = rest.substring(0, 4).let { "${it.substring(2, 4)}/${it.substring(0, 2)}" }

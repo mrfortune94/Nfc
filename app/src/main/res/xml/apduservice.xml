@@ -7,8 +7,6 @@
     <aid-group android:description="@string/aid_group_desc" android:category="other">
         <!-- Custom AID for card emulation -->
         <aid-filter android:name="F0010203040506" />
-        <!-- ISO 14443-4 Test AID -->
-        <aid-filter android:name="D276000085010100" />
     </aid-group>
     
     <!-- 

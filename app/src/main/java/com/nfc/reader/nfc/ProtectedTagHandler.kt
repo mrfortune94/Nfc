@@ -417,12 +417,13 @@ class ProtectedTagHandler {
             var successCount = 0
 
             for (sector in 0 until sectorCount) {
-                discoveredKeys[sector] = mutableMapOf()
+                val sectorKeys = mutableMapOf<String, String>()
+                discoveredKeys[sector] = sectorKeys
                 
                 for ((keyName, key) in NAMED_KEYS) {
                     try {
                         if (mifare.authenticateSectorWithKeyA(sector, key)) {
-                            discoveredKeys[sector]!!["KeyA"] = keyName
+                            sectorKeys["KeyA"] = keyName
                             successCount++
                             break
                         }
@@ -434,7 +435,7 @@ class ProtectedTagHandler {
                 for ((keyName, key) in NAMED_KEYS) {
                     try {
                         if (mifare.authenticateSectorWithKeyB(sector, key)) {
-                            discoveredKeys[sector]!!["KeyB"] = keyName
+                            sectorKeys["KeyB"] = keyName
                             break
                         }
                     } catch (_: Exception) {
