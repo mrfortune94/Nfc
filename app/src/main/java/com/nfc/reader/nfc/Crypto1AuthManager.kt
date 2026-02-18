@@ -406,9 +406,10 @@ class Crypto1AuthManager {
 
             val conditions = mutableListOf<BlockAccess>()
 
-            // For standard 4-block sectors, bits 0-2 are for data blocks, bit 3 is for trailer
-            // For 16-block sectors, the mapping is different (groups of 5 blocks)
-            val numEntries = if (blockCount <= 4) 4 else 4
+            // Access bits always define 4 access condition groups (bits 0-3).
+            // For 4-block sectors: bits 0-2 map to data blocks 0-2, bit 3 to sector trailer.
+            // For 16-block sectors (4K, sectors 32-39): bits 0-2 map to groups of 5 data blocks, bit 3 to sector trailer.
+            val numEntries = 4
 
             for (i in 0 until numEntries) {
                 val c1Bit = (c1 shr i) and 0x01

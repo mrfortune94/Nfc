@@ -47,7 +47,7 @@ class Crypto1AuthManagerTest {
     }
 
     @Test
-    fun testParseAccessBits_invalidShortTrailer() {
+    fun testParseAccessBits_insufficientTrailerLength() {
         val shortBlock = ByteArray(8) // Too short
         val result = Crypto1AuthManager.parseAccessBits(shortBlock, 4)
 
