@@ -188,6 +188,8 @@ class CardEmulationService : HostApduService() {
             0x88.toByte() -> handleGetChallenge(commandApdu) // GET CHALLENGE
             0x82.toByte() -> handleExternalAuth(commandApdu) // EXTERNAL AUTHENTICATE
             0x84.toByte() -> handleGetChallengeAlt(commandApdu) // GET CHALLENGE (alt)
+            0xAE.toByte() -> handleGenerateAC(commandApdu)   // GENERATE APPLICATION CRYPTOGRAM
+            0xC0.toByte() -> handleGetResponse(commandApdu)  // GET RESPONSE (ISO 7816)
             else -> {
                 Log.d(TAG, "Unhandled INS: ${String.format("%02X", ins)}")
                 STATUS_CONDITIONS_NOT_SATISFIED.hexToByteArray()
@@ -267,6 +269,38 @@ class CardEmulationService : HostApduService() {
         Log.d(TAG, "EXTERNAL AUTHENTICATE")
         
         // For testing, accept any authentication
+        return STATUS_SUCCESS.hexToByteArray()
+    }
+    
+    private fun handleGenerateAC(apdu: ByteArray): ByteArray {
+        Log.d(TAG, "GENERATE APPLICATION CRYPTOGRAM")
+        val p1 = apdu[2].toInt() and 0xFF
+        
+        val cryptogramType = when (p1 and 0xC0) {
+            0x00 -> "AAC (Application Authentication Cryptogram - decline)"
+            0x40 -> "TC (Transaction Certificate - approve offline)"
+            0x80 -> "ARQC (Authorization Request Cryptogram - go online)"
+            else -> "Unknown"
+        }
+        Log.d(TAG, "Requested cryptogram: $cryptogramType")
+        
+        // Build a minimal GENERATE AC response (Format 2 - tag 77)
+        val cryptogramInfoData = byteArrayOf((p1 and 0xC0).toByte()) // Mirror the type requested
+        val appCryptogram = ByteArray(8) // Placeholder cryptogram
+        SecureRandom().nextBytes(appCryptogram)
+        val atc = byteArrayOf(0x00, 0x01) // Application Transaction Counter
+        
+        val cidTag = buildTlv("9F27", cryptogramInfoData)
+        val acTag = buildTlv("9F26", appCryptogram)
+        val atcTag = buildTlv("9F36", atc)
+        
+        val response = buildTlv("77", cidTag + acTag + atcTag)
+        return response + STATUS_SUCCESS.hexToByteArray()
+    }
+    
+    private fun handleGetResponse(apdu: ByteArray): ByteArray {
+        Log.d(TAG, "GET RESPONSE")
+        // Return empty data with success (no pending data in our emulation)
         return STATUS_SUCCESS.hexToByteArray()
     }
     
