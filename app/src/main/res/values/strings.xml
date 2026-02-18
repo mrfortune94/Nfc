@@ -100,6 +100,8 @@
     <string name="emulation_supported">Emulation Supported</string>
     <string name="emulation_not_supported">Emulation Not Supported</string>
     <string name="emulation_not_supported_message">This card type cannot be emulated via HCE. Only certain card types support software emulation.</string>
+    <string name="emulation_limited">Limited Emulation</string>
+    <string name="emulation_limited_message">MIFARE Classic emulation is limited to UID presentation only. Full CRYPTO1 authentication cannot be emulated via software (HCE). This may work for some access control systems that only check the UID, but will not work for systems that require full sector authentication.</string>
     <string name="select_card_first">Please select a card first</string>
     <string name="select_card_to_emulate">Select Card to Emulate</string>
     <string name="no_cards_title">No Cards Available</string>
