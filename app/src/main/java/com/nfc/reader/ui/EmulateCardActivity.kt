@@ -15,8 +15,10 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.nfc.reader.R
 import com.nfc.reader.data.CardBackup
+import com.nfc.reader.data.EmulationProfile
 import com.nfc.reader.data.NfcDatabase
 import com.nfc.reader.databinding.ActivityEmulateCardBinding
+import com.nfc.reader.hce.CardEmulationService
 import com.nfc.reader.nfc.CardBackupHandler
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -146,22 +148,52 @@ class EmulateCardActivity : AppCompatActivity() {
     }
 
     private fun startEmulation() {
-        isEmulationActive = true
-        updateEmulationUI()
-        
-        // Note: Actual HCE emulation requires configuring the CardEmulationService
-        // This is a demonstration of the UI flow
-        Toast.makeText(this, R.string.emulation_started, Toast.LENGTH_SHORT).show()
-        
-        // In a real implementation, you would:
-        // 1. Store the selected backup's data in SharedPreferences or a service
-        // 2. Update the HCE service configuration
-        // 3. The CardEmulationService would respond with the backed up data
+        selectedBackup?.let { backup ->
+            // Configure the HCE service with the backup data
+            val responses = mutableMapOf<String, String>()
+            
+            // Store basic card info for emulation
+            CardEmulationService.setEmulationData(
+                context = this,
+                uid = backup.uid,
+                responses = responses,
+                enabled = true
+            )
+            
+            isEmulationActive = true
+            updateEmulationUI()
+            
+            Toast.makeText(this, R.string.emulation_started, Toast.LENGTH_SHORT).show()
+            
+            // Log the emulation start
+            lifecycleScope.launch {
+                val profile = EmulationProfile(
+                    profileName = backup.cardName,
+                    cardBackupId = backup.id,
+                    uid = backup.uid,
+                    cardType = backup.cardType,
+                    isoStandard = backup.isoStandard,
+                    isActive = true,
+                    lastEmulatedAt = System.currentTimeMillis()
+                )
+                database.emulationProfileDao().deactivateAllProfiles()
+                database.emulationProfileDao().insert(profile)
+            }
+        }
     }
 
     private fun stopEmulation() {
+        // Disable HCE emulation
+        CardEmulationService.clearEmulationData(this)
+        
         isEmulationActive = false
         updateEmulationUI()
+        
+        // Update profile status
+        lifecycleScope.launch {
+            database.emulationProfileDao().deactivateAllProfiles()
+        }
+        
         Toast.makeText(this, R.string.emulation_stopped, Toast.LENGTH_SHORT).show()
     }
 

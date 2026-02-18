@@ -32,9 +32,36 @@ interface CardBackupDao {
     @Query("SELECT * FROM card_backups WHERE uid = :uid")
     suspend fun getBackupByUid(uid: String): CardBackup?
     
+    @Query("SELECT * FROM card_backups WHERE id = :id")
+    suspend fun getBackupById(id: Long): CardBackup?
+    
     @Insert
     suspend fun insert(backup: CardBackup)
     
     @Delete
     suspend fun delete(backup: CardBackup)
+}
+
+@Dao
+interface EmulationProfileDao {
+    @Query("SELECT * FROM emulation_profiles ORDER BY timestamp DESC")
+    fun getAllProfiles(): Flow<List<EmulationProfile>>
+    
+    @Query("SELECT * FROM emulation_profiles WHERE isActive = 1 LIMIT 1")
+    suspend fun getActiveProfile(): EmulationProfile?
+    
+    @Query("SELECT * FROM emulation_profiles WHERE id = :id")
+    suspend fun getProfileById(id: Long): EmulationProfile?
+    
+    @Query("UPDATE emulation_profiles SET isActive = 0")
+    suspend fun deactivateAllProfiles()
+    
+    @Query("UPDATE emulation_profiles SET isActive = :isActive, lastEmulatedAt = :timestamp, emulationCount = emulationCount + 1 WHERE id = :id")
+    suspend fun setActiveProfile(id: Long, isActive: Boolean, timestamp: Long = System.currentTimeMillis())
+    
+    @Insert
+    suspend fun insert(profile: EmulationProfile): Long
+    
+    @Delete
+    suspend fun delete(profile: EmulationProfile)
 }

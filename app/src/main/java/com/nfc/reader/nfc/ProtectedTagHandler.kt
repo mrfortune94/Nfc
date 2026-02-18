@@ -389,21 +389,125 @@ class ProtectedTagHandler {
     }
 
     private fun tryDefaultKeys(mifare: MifareClassic, sector: Int): Boolean {
-        val defaultKeys = arrayOf(
-            MifareClassic.KEY_DEFAULT,
-            MifareClassic.KEY_MIFARE_APPLICATION_DIRECTORY,
-            MifareClassic.KEY_NFC_FORUM,
-            byteArrayOf(0xA0.toByte(), 0xA1.toByte(), 0xA2.toByte(), 0xA3.toByte(), 0xA4.toByte(), 0xA5.toByte()),
-            byteArrayOf(0xB0.toByte(), 0xB1.toByte(), 0xB2.toByte(), 0xB3.toByte(), 0xB4.toByte(), 0xB5.toByte()),
-            byteArrayOf(0xD3.toByte(), 0xF7.toByte(), 0xD3.toByte(), 0xF7.toByte(), 0xD3.toByte(), 0xF7.toByte())
-        )
-
-        for (key in defaultKeys) {
-            if (mifare.authenticateSectorWithKeyA(sector, key)) return true
-            if (mifare.authenticateSectorWithKeyB(sector, key)) return true
+        for (key in COMMON_KEYS) {
+            try {
+                if (mifare.authenticateSectorWithKeyA(sector, key)) return true
+                if (mifare.authenticateSectorWithKeyB(sector, key)) return true
+            } catch (_: Exception) {
+                // Continue trying other keys
+            }
         }
 
         return false
+    }
+
+    /**
+     * Discover keys for all sectors using common key dictionary
+     * Returns a map of sector -> working key pairs
+     */
+    fun discoverKeys(tag: Tag): AuthResult {
+        val mifare = MifareClassic.get(tag)
+            ?: return AuthResult.Error("Not a Mifare Classic tag")
+
+        return try {
+            mifare.connect()
+            
+            val sectorCount = mifare.sectorCount
+            val discoveredKeys = mutableMapOf<Int, MutableMap<String, String>>()
+            var successCount = 0
+
+            for (sector in 0 until sectorCount) {
+                val sectorKeys = mutableMapOf<String, String>()
+                discoveredKeys[sector] = sectorKeys
+                
+                for ((keyName, key) in NAMED_KEYS) {
+                    try {
+                        if (mifare.authenticateSectorWithKeyA(sector, key)) {
+                            sectorKeys["KeyA"] = keyName
+                            successCount++
+                            break
+                        }
+                    } catch (_: Exception) {
+                        // Continue
+                    }
+                }
+                
+                for ((keyName, key) in NAMED_KEYS) {
+                    try {
+                        if (mifare.authenticateSectorWithKeyB(sector, key)) {
+                            sectorKeys["KeyB"] = keyName
+                            break
+                        }
+                    } catch (_: Exception) {
+                        // Continue
+                    }
+                }
+            }
+
+            val data = mapOf(
+                "totalSectors" to sectorCount,
+                "successCount" to successCount,
+                "discoveredKeys" to discoveredKeys
+            )
+
+            AuthResult.Success("Key discovery complete: $successCount/$sectorCount sectors accessible", data)
+        } catch (e: Exception) {
+            AuthResult.Error("Error: ${e.message}")
+        } finally {
+            if (mifare.isConnected) {
+                mifare.close()
+            }
+        }
+    }
+
+    /**
+     * Perform nested authentication attack simulation
+     * This demonstrates the concept - actual implementation requires
+     * low-level radio control not available on standard Android
+     */
+    fun nestedAuthenticationInfo(tag: Tag): AuthResult {
+        val mifare = MifareClassic.get(tag)
+            ?: return AuthResult.Error("Not a Mifare Classic tag")
+
+        return try {
+            mifare.connect()
+            
+            val cardType = when (mifare.type) {
+                MifareClassic.TYPE_CLASSIC -> "Mifare Classic (potentially vulnerable)"
+                MifareClassic.TYPE_PLUS -> "Mifare Plus (improved security)"
+                MifareClassic.TYPE_PRO -> "Mifare Pro"
+                else -> "Unknown type"
+            }
+
+            val info = buildString {
+                appendLine("Card Type: $cardType")
+                appendLine("Sector Count: ${mifare.sectorCount}")
+                appendLine("Size: ${mifare.size} bytes")
+                appendLine()
+                appendLine("Security Note:")
+                appendLine("Nested authentication attacks require specialized hardware")
+                appendLine("that can capture timing information from the PRNG.")
+                appendLine("Standard Android NFC hardware cannot perform this.")
+                appendLine()
+                appendLine("Mifare Classic uses CRYPTO1 which has known weaknesses.")
+                appendLine("Mifare Plus and DESFire use AES encryption.")
+            }
+
+            val data = mapOf(
+                "cardType" to cardType,
+                "sectorCount" to mifare.sectorCount,
+                "size" to mifare.size,
+                "info" to info
+            )
+
+            AuthResult.Success("Card analyzed", data)
+        } catch (e: Exception) {
+            AuthResult.Error("Error: ${e.message}")
+        } finally {
+            if (mifare.isConnected) {
+                mifare.close()
+            }
+        }
     }
 
     enum class KeyType {
@@ -415,6 +519,39 @@ class ProtectedTagHandler {
         val KEY_DEFAULT = MifareClassic.KEY_DEFAULT
         val KEY_MAD = MifareClassic.KEY_MIFARE_APPLICATION_DIRECTORY
         val KEY_NFC_FORUM = MifareClassic.KEY_NFC_FORUM
+
+        // Extended list of common keys
+        val COMMON_KEYS = arrayOf(
+            MifareClassic.KEY_DEFAULT, // FFFFFFFFFFFF
+            MifareClassic.KEY_MIFARE_APPLICATION_DIRECTORY, // A0A1A2A3A4A5
+            MifareClassic.KEY_NFC_FORUM, // D3F7D3F7D3F7
+            byteArrayOf(0xA0.toByte(), 0xA1.toByte(), 0xA2.toByte(), 0xA3.toByte(), 0xA4.toByte(), 0xA5.toByte()),
+            byteArrayOf(0xB0.toByte(), 0xB1.toByte(), 0xB2.toByte(), 0xB3.toByte(), 0xB4.toByte(), 0xB5.toByte()),
+            byteArrayOf(0xD3.toByte(), 0xF7.toByte(), 0xD3.toByte(), 0xF7.toByte(), 0xD3.toByte(), 0xF7.toByte()),
+            // Common transit/access card keys
+            byteArrayOf(0x00, 0x00, 0x00, 0x00, 0x00, 0x00), // All zeros
+            byteArrayOf(0xA0.toByte(), 0xB0.toByte(), 0xC0.toByte(), 0xD0.toByte(), 0xE0.toByte(), 0xF0.toByte()),
+            byteArrayOf(0x4D.toByte(), 0x3A.toByte(), 0x99.toByte(), 0xC3.toByte(), 0x51.toByte(), 0xDD.toByte()),
+            byteArrayOf(0x1A.toByte(), 0x98.toByte(), 0x2C.toByte(), 0x7E.toByte(), 0x45.toByte(), 0x9A.toByte()),
+            byteArrayOf(0xAA.toByte(), 0xBB.toByte(), 0xCC.toByte(), 0xDD.toByte(), 0xEE.toByte(), 0xFF.toByte()),
+            byteArrayOf(0x00, 0x11, 0x22, 0x33, 0x44, 0x55),
+            byteArrayOf(0x01, 0x02, 0x03, 0x04, 0x05, 0x06),
+            byteArrayOf(0x12, 0x34, 0x56, 0x78, 0x9A.toByte(), 0xBC.toByte()),
+            byteArrayOf(0x71, 0x4C.toByte(), 0x5C.toByte(), 0x88.toByte(), 0x6E.toByte(), 0x97.toByte()),
+            byteArrayOf(0x58.toByte(), 0x7E.toByte(), 0xE5.toByte(), 0xF9.toByte(), 0x35.toByte(), 0x0F.toByte()),
+            byteArrayOf(0xA6.toByte(), 0x22.toByte(), 0x6C.toByte(), 0xE8.toByte(), 0xFC.toByte(), 0xAD.toByte())
+        )
+
+        // Named keys for reporting
+        val NAMED_KEYS = mapOf(
+            "Default (FFFFFFFFFFFF)" to MifareClassic.KEY_DEFAULT,
+            "MAD (A0A1A2A3A4A5)" to MifareClassic.KEY_MIFARE_APPLICATION_DIRECTORY,
+            "NFC Forum (D3F7D3F7D3F7)" to MifareClassic.KEY_NFC_FORUM,
+            "All Zeros" to byteArrayOf(0x00, 0x00, 0x00, 0x00, 0x00, 0x00),
+            "Sequential (010203040506)" to byteArrayOf(0x01, 0x02, 0x03, 0x04, 0x05, 0x06),
+            "Common 1" to byteArrayOf(0xA0.toByte(), 0xB0.toByte(), 0xC0.toByte(), 0xD0.toByte(), 0xE0.toByte(), 0xF0.toByte()),
+            "Common 2" to byteArrayOf(0x4D.toByte(), 0x3A.toByte(), 0x99.toByte(), 0xC3.toByte(), 0x51.toByte(), 0xDD.toByte())
+        )
 
         fun hexStringToByteArray(hex: String): ByteArray {
             val cleaned = hex.replace(" ", "").replace(":", "")
