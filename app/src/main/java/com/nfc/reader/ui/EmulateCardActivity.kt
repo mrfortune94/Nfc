@@ -69,7 +69,12 @@ class EmulateCardActivity : AppCompatActivity() {
             }
 
             if (selectedBackup?.canEmulate == true) {
-                startEmulation()
+                // Check if this is a MIFARE Classic card and show warning
+                if (selectedBackup?.technologies?.contains("MifareClassic") == true) {
+                    showMifareClassicWarningDialog()
+                } else {
+                    startEmulation()
+                }
             } else {
                 showEmulationNotSupportedDialog()
             }
@@ -216,6 +221,17 @@ class EmulateCardActivity : AppCompatActivity() {
             .setTitle(R.string.emulation_not_supported)
             .setMessage(R.string.emulation_not_supported_message)
             .setPositiveButton(android.R.string.ok, null)
+            .show()
+    }
+
+    private fun showMifareClassicWarningDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.emulation_limited)
+            .setMessage(R.string.emulation_limited_message)
+            .setPositiveButton(R.string.start_emulation) { _, _ ->
+                startEmulation()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
 
