@@ -59,6 +59,8 @@
     <!-- HCE Service -->
     <string name="service_desc">NFC Card Emulation Service</string>
     <string name="aid_group_desc">Custom card emulation</string>
+    <string name="payment_aids_desc">Payment card protocols (research only)</string>
+    <string name="access_aids_desc">Access control protocols</string>
     
     <!-- ISO Standards -->
     <string name="iso_14443a">ISO/IEC 14443-A</string>

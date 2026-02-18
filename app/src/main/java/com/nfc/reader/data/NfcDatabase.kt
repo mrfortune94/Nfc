@@ -7,14 +7,15 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [NfcLog::class, CardBackup::class],
-    version = 1,
+    entities = [NfcLog::class, CardBackup::class, EmulationProfile::class],
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class NfcDatabase : RoomDatabase() {
     abstract fun nfcLogDao(): NfcLogDao
     abstract fun cardBackupDao(): CardBackupDao
+    abstract fun emulationProfileDao(): EmulationProfileDao
     
     companion object {
         @Volatile
@@ -26,7 +27,9 @@ abstract class NfcDatabase : RoomDatabase() {
                     context.applicationContext,
                     NfcDatabase::class.java,
                     "nfc_database"
-                ).build()
+                )
+                .fallbackToDestructiveMigration() // Allow schema migration
+                .build()
                 INSTANCE = instance
                 instance
             }

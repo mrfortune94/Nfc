@@ -2,11 +2,63 @@
 <host-apdu-service xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/service_desc"
     android:requireDeviceUnlock="false">
-    <!-- Payment System Environment (PSE) for EMV -->
+    
+    <!-- Custom HCE AID for general emulation -->
     <aid-group android:description="@string/aid_group_desc" android:category="other">
-        <!-- ISO 7816-4 SELECT command AID -->
-        <aid-filter android:name="A0000000031010" />
         <!-- Custom AID for card emulation -->
         <aid-filter android:name="F0010203040506" />
+        <!-- ISO 14443-4 Test AID -->
+        <aid-filter android:name="D276000085010100" />
+    </aid-group>
+    
+    <!-- 
+    Payment Card AIDs (for research/testing purposes only)
+    These are included for educational purposes to understand
+    the communication protocols used by payment systems.
+    
+    NOTE: Actual payment card emulation requires proper
+    cryptographic keys and is controlled by card networks.
+    -->
+    <aid-group android:description="@string/payment_aids_desc" android:category="payment">
+        <!-- Visa -->
+        <aid-filter android:name="A0000000031010" />
+        <!-- Visa Electron -->
+        <aid-filter android:name="A0000000032010" />
+        <!-- Visa Interlink -->
+        <aid-filter android:name="A0000000033010" />
+        <!-- Visa Plus -->
+        <aid-filter android:name="A0000000038010" />
+        <!-- Visa V Pay -->
+        <aid-filter android:name="A000000003101001" />
+        <!-- Mastercard -->
+        <aid-filter android:name="A0000000041010" />
+        <!-- Mastercard Maestro -->
+        <aid-filter android:name="A0000000042203" />
+        <!-- Mastercard Maestro UK -->
+        <aid-filter android:name="A0000000046000" />
+        <!-- Mastercard Debit -->
+        <aid-filter android:name="A0000000043060" />
+        <!-- American Express -->
+        <aid-filter android:name="A00000002501" />
+        <!-- Discover -->
+        <aid-filter android:name="A0000001523010" />
+        <!-- JCB -->
+        <aid-filter android:name="A0000000651010" />
+        <!-- UnionPay Debit -->
+        <aid-filter android:name="A000000333010101" />
+        <!-- UnionPay Credit -->
+        <aid-filter android:name="A000000333010102" />
+        <!-- MIR -->
+        <aid-filter android:name="A0000006581010" />
+    </aid-group>
+    
+    <!-- Access Control and Transit AIDs -->
+    <aid-group android:description="@string/access_aids_desc" android:category="other">
+        <!-- MIFARE DESFire -->
+        <aid-filter android:name="D276000085010100" />
+        <!-- FeliCa -->
+        <aid-filter android:name="D2760000850101" />
+        <!-- Transit systems -->
+        <aid-filter android:name="D2760000250901" />
     </aid-group>
 </host-apdu-service>

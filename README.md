@@ -1,6 +1,6 @@
 # NFC PRO
 
-A comprehensive Android NFC application for reading, writing, and emulating NFC tags with support for multiple ISO/IEC standards. Now featuring a **premium user interface** with enhanced visual design and smooth animations.
+A comprehensive Android NFC application for reading, writing, cloning, backing up, and emulating/replaying NFC tags with support for multiple ISO/IEC standards. Now featuring a **premium user interface** with enhanced visual design and smooth animations.
 
 ## ✨ Premium UI Features
 
@@ -38,15 +38,32 @@ A comprehensive Android NFC application for reading, writing, and emulating NFC 
 - **History Tracking**: Complete audit trail of all NFC interactions
 - **Tag Statistics**: Track read/write operations
 
-### 5. Card Operations
-- **Card Backup**: Save card data for cloning
-- **Access Card Cloning**: Duplicate supported access cards
-- **Credential Storage**: Secure storage of card credentials
+### 5. Card Backup & Cloning
+- **Card Backup**: Save complete card data for duplication
+- **Multi-format Support**: Backup MIFARE Classic, NFC-A, NFC-B, NFC-V tags
+- **Secure Storage**: Encrypted local storage for sensitive card data
+- **Export Backups**: Export card data to JSON for archival
 
-### 6. Card Emulation (HCE)
+### 6. Card Emulation & Replay (HCE)
 - **Host-based Card Emulation**: Emulate NFC cards without secure element
-- **Credential Emulation**: Emulate stored access cards
-- **Custom AID Support**: Configure custom Application Identifiers
+- **Card Replay**: Replay backed up card data to NFC readers
+- **Emulation Profiles**: Store and manage multiple emulation configurations
+- **Multi-AID Support**: Support for payment, access control, and transit AIDs
+- **Custom Responses**: Configure custom APDU response pairs
+
+### 7. Protected Tag Operations
+- **Key Authentication**: Authenticate with MIFARE Classic using Key A/B
+- **Key Discovery**: Automatic discovery of working keys using common key dictionary
+- **Sector Read/Write**: Read and write individual sectors with authentication
+- **Full Dump**: Complete card dump with all accessible sectors
+- **Nested Auth Info**: Information about card security characteristics
+
+### 8. Payment Card Analysis (Research Only)
+- **EMV Deep Read**: Comprehensive parsing of EMV contactless cards
+- **Multi-Network Support**: Visa, Mastercard, AMEX, Discover, JCB, UnionPay, MIR
+- **TLV Parser**: Recursive BER-TLV structure parsing with EMV tag dictionary
+- **Track2 Parsing**: Extract PAN, expiry, and service code from Track2 data
+- **Application Selection**: PPSE/PSE directory reading and AID selection
 
 ## Supported NFC Standards
 
@@ -61,6 +78,7 @@ A comprehensive Android NFC application for reading, writing, and emulating NFC 
 - **EMVCo Standards**: Support for EMV contactless payments
 - **PSE Reading**: Payment System Environment access
 - **ISO 14443 Compliance**: Built on ISO 14443 standards
+- **Payment Card Brands**: Visa, Mastercard, AMEX, Discover, JCB, UnionPay, MIR
 
 ### ISO/IEC 7816
 - **APDU Commands**: Full Application Protocol Data Unit support
@@ -203,10 +221,31 @@ CLA | INS | P1 | P2 | Lc | Data | Le
 
 ## Security Considerations
 
+### General Security
 - Sensitive card data encrypted before storage
-- No default keys hardcoded
-- User consent required for card cloning
+- User consent required for card cloning/emulation
 - HCE operates in isolated process
+- Disclaimer required on first launch
+
+### Payment Card Research Notes
+The payment card analysis features are provided **strictly for educational and security research purposes**:
+
+- **No Transaction Capability**: This app cannot make payments or create valid transactions
+- **Research Tool**: Designed for security researchers to understand EMV protocols
+- **No Cryptographic Bypass**: Cannot bypass card security (CDA, DDA, SDA signatures)
+- **Read-Only Analysis**: Extracts publicly readable data per EMV specifications
+- **Compliance**: All features comply with publicly documented ISO/EMV standards
+
+### Legal Considerations
+- Only use with cards you own
+- Unauthorized access to NFC systems may violate computer fraud laws
+- Payment card research should comply with PCI-DSS and local regulations
+- This tool is not intended for fraud or unauthorized access
+
+### Key Management for Mifare Classic
+- Built-in key dictionary includes only publicly known keys
+- Users can add their own keys for tags they own
+- Keys are stored locally and not transmitted
 
 ## License
 
