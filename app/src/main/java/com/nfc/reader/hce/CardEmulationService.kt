@@ -285,7 +285,9 @@ class CardEmulationService : HostApduService() {
         Log.d(TAG, "Requested cryptogram: $cryptogramType")
         
         // Build a minimal GENERATE AC response (Format 2 - tag 77)
-        val cryptogramInfoData = byteArrayOf((p1 and 0xC0).toByte()) // Mirror the type requested
+        // Simplified CID: mirrors requested cryptogram type from P1.
+        // Full EMV CID includes additional CVM results and issuer discretionary bits.
+        val cryptogramInfoData = byteArrayOf((p1 and 0xC0).toByte())
         val appCryptogram = ByteArray(8) // Placeholder cryptogram
         SecureRandom().nextBytes(appCryptogram)
         val atc = byteArrayOf(0x00, 0x01) // Application Transaction Counter

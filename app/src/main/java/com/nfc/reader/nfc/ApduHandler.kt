@@ -241,6 +241,8 @@ class ApduHandler {
      * Transceive with EMV response chaining:
      * - SW 61XX: issue GET RESPONSE to retrieve remaining data
      * - SW 6CXX: re-send with corrected Le from SW2
+     * Note: Le correction assumes Le is the last byte, which holds for
+     * all EMV commands constructed by this handler (Case 2/4 APDUs).
      */
     private fun transceiveWithChaining(isoDep: IsoDep, command: ByteArray): ByteArray {
         var response = isoDep.transceive(command)

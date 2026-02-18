@@ -521,7 +521,7 @@ class EmvDeepParser(private val isoDep: IsoDep) {
         // AFL is 4 bytes per entry: SFI(1) | FirstRecord(1) | LastRecord(1) | ODARecords(1)
         var i = 0
         while (i + 3 < afl.size) {
-            val sfi = (afl[i].toInt() and 0xFF) shr 3
+            val sfi = (afl[i].toInt() and 0xF8) shr 3
             val firstRec = afl[i + 1].toInt() and 0xFF
             val lastRec = afl[i + 2].toInt() and 0xFF
             if (sfi in 1..30 && firstRec in 1..255 && lastRec >= firstRec) {
@@ -556,7 +556,7 @@ class EmvDeepParser(private val isoDep: IsoDep) {
      * Build default PDOL data based on the PDOL from the card's FCI.
      * Fills in zero/default values for requested terminal data objects.
      */
-    fun buildDefaultPdolData(pdolBytes: ByteArray): ByteArray {
+    private fun buildDefaultPdolData(pdolBytes: ByteArray): ByteArray {
         val result = mutableListOf<Byte>()
         var pos = 0
         
