@@ -141,6 +141,8 @@
     <string name="op_write_block">Write Block</string>
     <string name="op_test_auth">Test Authentication</string>
     <string name="op_dump_all">Dump All Sectors</string>
+    <string name="op_full_auth">Full CRYPTO1 Auth</string>
+    <string name="op_discover_keys">Discover Keys</string>
     <string name="authentication_key">Authentication Key</string>
     <string name="key_a">Key A</string>
     <string name="key_b">Key B</string>
@@ -160,6 +162,8 @@
     <string name="write_block">Write Block</string>
     <string name="test_authentication">Test Auth</string>
     <string name="dump_all_sectors">Dump All</string>
+    <string name="full_crypto1_auth">Full CRYPTO1 Auth</string>
+    <string name="discover_keys">Discover Keys</string>
     <string name="result">Result</string>
     <string name="scan_tag_first">Scan a tag first</string>
     <string name="invalid_key">Key must be exactly 12 hex characters</string>

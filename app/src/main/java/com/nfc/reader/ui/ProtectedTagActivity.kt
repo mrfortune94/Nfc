@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.nfc.reader.R
 import com.nfc.reader.databinding.ActivityProtectedTagBinding
+import com.nfc.reader.nfc.Crypto1AuthManager
 import com.nfc.reader.nfc.ProtectedTagHandler
 import com.nfc.reader.utils.toHexString
 
@@ -28,6 +29,7 @@ class ProtectedTagActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProtectedTagBinding
     private var nfcAdapter: NfcAdapter? = null
     private val protectedTagHandler = ProtectedTagHandler()
+    private val crypto1AuthManager = Crypto1AuthManager()
     
     private var currentTag: Tag? = null
     private var selectedOperation = Operation.READ
@@ -36,7 +38,7 @@ class ProtectedTagActivity : AppCompatActivity() {
     private var selectedSector = 0
 
     enum class Operation {
-        READ, WRITE, AUTH_TEST, DUMP_ALL
+        READ, WRITE, AUTH_TEST, DUMP_ALL, FULL_CRYPTO1_AUTH, DISCOVER_KEYS
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +62,9 @@ class ProtectedTagActivity : AppCompatActivity() {
             getString(R.string.op_read_sector),
             getString(R.string.op_write_block),
             getString(R.string.op_test_auth),
-            getString(R.string.op_dump_all)
+            getString(R.string.op_dump_all),
+            getString(R.string.op_full_auth),
+            getString(R.string.op_discover_keys)
         )
         val operationAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, operations)
         binding.operationSpinner.adapter = operationAdapter
@@ -158,6 +162,16 @@ class ProtectedTagActivity : AppCompatActivity() {
                 binding.writeDataLayout.visibility = View.GONE
                 binding.executeButton.text = getString(R.string.dump_all_sectors)
             }
+            Operation.FULL_CRYPTO1_AUTH -> {
+                binding.sectorSelectionLayout.visibility = View.GONE
+                binding.writeDataLayout.visibility = View.GONE
+                binding.executeButton.text = getString(R.string.full_crypto1_auth)
+            }
+            Operation.DISCOVER_KEYS -> {
+                binding.sectorSelectionLayout.visibility = View.GONE
+                binding.writeDataLayout.visibility = View.GONE
+                binding.executeButton.text = getString(R.string.discover_keys)
+            }
         }
     }
 
@@ -170,6 +184,8 @@ class ProtectedTagActivity : AppCompatActivity() {
             Operation.WRITE -> writeBlock(tag, key)
             Operation.AUTH_TEST -> testAuthentication(tag, key)
             Operation.DUMP_ALL -> dumpAllSectors(tag, key)
+            Operation.FULL_CRYPTO1_AUTH -> performFullCrypto1Auth(tag)
+            Operation.DISCOVER_KEYS -> discoverKeys(tag)
         }
     }
 
@@ -284,6 +300,46 @@ class ProtectedTagActivity : AppCompatActivity() {
                     }
                 }
                 showResult("Dump Complete", output)
+            }
+            is ProtectedTagHandler.AuthResult.Error -> {
+                showResult("Error", result.message)
+            }
+        }
+    }
+
+    private fun performFullCrypto1Auth(tag: Tag) {
+        val result = crypto1AuthManager.performFullCardAuth(tag)
+
+        when (result) {
+            is ProtectedTagHandler.AuthResult.Success -> {
+                val report = result.data["report"] as? String ?: result.message
+                showResult("Full CRYPTO1 Auth Complete", report)
+            }
+            is ProtectedTagHandler.AuthResult.Error -> {
+                showResult("Error", result.message)
+            }
+        }
+    }
+
+    private fun discoverKeys(tag: Tag) {
+        val result = protectedTagHandler.discoverKeys(tag)
+
+        when (result) {
+            is ProtectedTagHandler.AuthResult.Success -> {
+                @Suppress("UNCHECKED_CAST")
+                val discoveredKeys = result.data["discoveredKeys"] as? Map<Int, Map<String, String>>
+                val output = buildString {
+                    appendLine("Key Discovery Results:")
+                    appendLine(result.message)
+                    appendLine()
+                    discoveredKeys?.forEach { (sector, keys) ->
+                        appendLine("Sector $sector:")
+                        keys.forEach { (keyType, keyName) ->
+                            appendLine("  $keyType: $keyName")
+                        }
+                    }
+                }
+                showResult("Key Discovery", output)
             }
             is ProtectedTagHandler.AuthResult.Error -> {
                 showResult("Error", result.message)
