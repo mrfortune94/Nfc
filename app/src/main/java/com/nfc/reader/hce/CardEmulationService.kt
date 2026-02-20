@@ -138,11 +138,12 @@ class CardEmulationService : HostApduService() {
 
         // Initialize Mifare Classic emulator if card type is Mifare Classic
         val cardType = prefs?.getString(KEY_CARD_TYPE, null)
-        if (cardType != null && cardType.contains("Mifare", ignoreCase = true) && customUid != null) {
+        val uid = customUid
+        if (cardType != null && cardType.contains("Mifare", ignoreCase = true) && uid != null) {
             val atqa = prefs?.getString(KEY_ATQA, null)
             val sak = prefs?.getString(KEY_SAK, null)
-            mifareEmulator = MifareClassicEmulator(customUid!!, atqa, sak)
-            Log.d(TAG, "Mifare Classic UID emulator initialized for UID: $customUid")
+            mifareEmulator = MifareClassicEmulator(uid, atqa, sak)
+            Log.d(TAG, "Mifare Classic UID emulator initialized for UID: $uid")
         } else {
             mifareEmulator = null
         }

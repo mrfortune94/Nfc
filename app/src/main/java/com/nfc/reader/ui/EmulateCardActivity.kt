@@ -169,7 +169,7 @@ class EmulateCardActivity : AppCompatActivity() {
                     )
                     atqa = data?.get("atqa") as? String
                     sak = data?.get("sak") as? String
-                } catch (_: Exception) {
+                } catch (_: com.google.gson.JsonSyntaxException) {
                     // ATQA/SAK not available in sector data; defaults will be used
                 }
             }

@@ -30,6 +30,9 @@ class MifareClassicEmulator(
         // Status words
         private const val STATUS_SUCCESS = "9000"
 
+        // Valid Mifare Classic UID byte lengths
+        private val VALID_UID_LENGTHS = setOf(4, 7, 10)
+
         /**
          * Validate that a UID string is a valid Mifare Classic UID.
          * Mifare Classic supports 4-byte (single size), 7-byte (double size),
@@ -39,7 +42,7 @@ class MifareClassicEmulator(
             val cleaned = uid.replace(" ", "").replace(":", "")
             if (cleaned.isEmpty() || cleaned.length % 2 != 0) return false
             val byteLength = cleaned.length / 2
-            if (byteLength !in intArrayOf(4, 7, 10)) return false
+            if (byteLength !in VALID_UID_LENGTHS) return false
             return cleaned.all { it in '0'..'9' || it in 'a'..'f' || it in 'A'..'F' }
         }
 
