@@ -150,6 +150,10 @@ class CardEmulationService : HostApduService() {
     }
     
     override fun processCommandApdu(commandApdu: ByteArray?, extras: Bundle?): ByteArray {
+        // Reload profile on every invocation: the service may be cached between NFC sessions
+        // so a profile set after the last onCreate() must still be picked up.
+        loadEmulationProfile()
+
         if (commandApdu == null || commandApdu.isEmpty()) {
             Log.w(TAG, "Received null or empty APDU")
             return UNKNOWN_CMD_SW.hexToByteArray()

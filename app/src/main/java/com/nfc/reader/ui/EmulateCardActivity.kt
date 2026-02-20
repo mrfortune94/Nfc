@@ -155,55 +155,71 @@ class EmulateCardActivity : AppCompatActivity() {
 
     private fun startEmulation() {
         selectedBackup?.let { backup ->
-            // Configure the HCE service with the backup data
-            val responses = mutableMapOf<String, String>()
-            
-            // Determine ATQA and SAK from stored sector data for Mifare Classic
-            var atqa: String? = null
-            var sak: String? = null
-            if (backup.cardType.contains("Mifare", ignoreCase = true)) {
-                try {
-                    val data = com.google.gson.Gson().fromJson(
-                        backup.sectorData,
-                        Map::class.java
-                    )
-                    atqa = data?.get("atqa") as? String
-                    sak = data?.get("sak") as? String
-                } catch (_: com.google.gson.JsonSyntaxException) {
-                    // ATQA/SAK not available in sector data; defaults will be used
-                }
+            val isMifareClassic = backup.cardType.contains("Mifare", ignoreCase = true)
+            if (isMifareClassic) {
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.mifare_classic_hce_limitation_title)
+                    .setMessage(R.string.mifare_classic_hce_limitation)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        startEmulationInternal(backup)
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+            } else {
+                startEmulationInternal(backup)
             }
+        }
+    }
 
-            // Store basic card info for emulation
-            CardEmulationService.setEmulationData(
-                context = this,
-                uid = backup.uid,
-                responses = responses,
-                enabled = true,
-                cardType = backup.cardType,
-                atqa = atqa,
-                sak = sak
-            )
-            
-            isEmulationActive = true
-            updateEmulationUI()
-            
-            Toast.makeText(this, R.string.emulation_started, Toast.LENGTH_SHORT).show()
-            
-            // Log the emulation start
-            lifecycleScope.launch {
-                val profile = EmulationProfile(
-                    profileName = backup.cardName,
-                    cardBackupId = backup.id,
-                    uid = backup.uid,
-                    cardType = backup.cardType,
-                    isoStandard = backup.isoStandard,
-                    isActive = true,
-                    lastEmulatedAt = System.currentTimeMillis()
+    private fun startEmulationInternal(backup: CardBackup) {
+        // Configure the HCE service with the backup data
+        val responses = mutableMapOf<String, String>()
+
+        // Determine ATQA and SAK from stored sector data for Mifare Classic
+        var atqa: String? = null
+        var sak: String? = null
+        if (backup.cardType.contains("Mifare", ignoreCase = true)) {
+            try {
+                val data = com.google.gson.Gson().fromJson(
+                    backup.sectorData,
+                    Map::class.java
                 )
-                database.emulationProfileDao().deactivateAllProfiles()
-                database.emulationProfileDao().insert(profile)
+                atqa = data?.get("atqa") as? String
+                sak = data?.get("sak") as? String
+            } catch (_: com.google.gson.JsonSyntaxException) {
+                // ATQA/SAK not available in sector data; defaults will be used
             }
+        }
+
+        // Store basic card info for emulation
+        CardEmulationService.setEmulationData(
+            context = this,
+            uid = backup.uid,
+            responses = responses,
+            enabled = true,
+            cardType = backup.cardType,
+            atqa = atqa,
+            sak = sak
+        )
+
+        isEmulationActive = true
+        updateEmulationUI()
+
+        Toast.makeText(this, R.string.emulation_started, Toast.LENGTH_SHORT).show()
+
+        // Log the emulation start
+        lifecycleScope.launch {
+            val profile = EmulationProfile(
+                profileName = backup.cardName,
+                cardBackupId = backup.id,
+                uid = backup.uid,
+                cardType = backup.cardType,
+                isoStandard = backup.isoStandard,
+                isActive = true,
+                lastEmulatedAt = System.currentTimeMillis()
+            )
+            database.emulationProfileDao().deactivateAllProfiles()
+            database.emulationProfileDao().insert(profile)
         }
     }
 

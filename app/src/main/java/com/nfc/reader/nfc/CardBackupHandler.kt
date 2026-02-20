@@ -7,6 +7,7 @@ import android.nfc.tech.NfcB
 import android.nfc.tech.NfcV
 import com.google.gson.Gson
 import com.nfc.reader.data.CardBackup
+import com.nfc.reader.hce.MifareClassicEmulator
 import com.nfc.reader.utils.toHexString
 import java.io.IOException
 
@@ -65,6 +66,11 @@ class CardBackupHandler {
             success = false,
             message = "Not a Mifare Classic card"
         )
+
+        // Read ATQA and SAK from NfcA — available without connecting, captured during tag discovery
+        val nfcA = NfcA.get(tag)
+        val atqa = nfcA?.atqa?.toHexString() ?: MifareClassicEmulator.MIFARE_CLASSIC_1K_ATQA
+        val sak = nfcA?.sak?.let { String.format("%02X", it) } ?: MifareClassicEmulator.MIFARE_CLASSIC_1K_SAK
         
         try {
             mifare.connect()
@@ -99,12 +105,20 @@ class CardBackupHandler {
             }
             
             mifare.close()
+
+            // Store ATQA and SAK alongside the sector block data so that the
+            // MifareClassicEmulator can be initialized with the correct card parameters.
+            val sectorDataWithMeta = mapOf(
+                "atqa" to atqa,
+                "sak" to sak,
+                "sectors" to sectorData
+            )
             
             val backup = CardBackup(
                 uid = tag.id.toHexString(),
                 cardName = cardName,
                 cardType = getMifareType(mifare.type),
-                sectorData = gson.toJson(sectorData),
+                sectorData = gson.toJson(sectorDataWithMeta),
                 isoStandard = "ISO/IEC 14443-A",
                 technologies = "MifareClassic,NfcA",
                 memorySize = mifare.size,
@@ -141,7 +155,7 @@ class CardBackupHandler {
             // Store basic card info
             val data = mapOf(
                 "atqa" to nfcA.atqa.toHexString(),
-                "sak" to nfcA.sak.toString(),
+                "sak" to String.format("%02X", nfcA.sak),
                 "maxTransceive" to nfcA.maxTransceiveLength.toString()
             )
             
