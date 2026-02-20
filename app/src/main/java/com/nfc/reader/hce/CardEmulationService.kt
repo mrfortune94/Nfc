@@ -38,6 +38,9 @@ class CardEmulationService : HostApduService() {
         private const val KEY_CUSTOM_UID = "custom_uid"
         private const val KEY_CUSTOM_RESPONSES = "custom_responses"
         private const val KEY_EMULATION_ENABLED = "emulation_enabled"
+        private const val KEY_CARD_TYPE = "card_type"
+        private const val KEY_ATQA = "atqa"
+        private const val KEY_SAK = "sak"
         
         // Known AIDs for various card types
         val COMMON_AIDS = mapOf(
@@ -64,7 +67,8 @@ class CardEmulationService : HostApduService() {
             return cleaned.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
         }
         
-        fun setEmulationData(context: Context, uid: String?, responses: Map<String, String>?, enabled: Boolean) {
+        fun setEmulationData(context: Context, uid: String?, responses: Map<String, String>?, enabled: Boolean,
+                              cardType: String? = null, atqa: String? = null, sak: String? = null) {
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             val editor = prefs.edit()
             
@@ -77,6 +81,16 @@ class CardEmulationService : HostApduService() {
             if (responses != null) {
                 val gson = Gson()
                 editor.putString(KEY_CUSTOM_RESPONSES, gson.toJson(responses))
+            }
+
+            if (cardType != null) {
+                editor.putString(KEY_CARD_TYPE, cardType)
+            }
+            if (atqa != null) {
+                editor.putString(KEY_ATQA, atqa)
+            }
+            if (sak != null) {
+                editor.putString(KEY_SAK, sak)
             }
             
             editor.apply()
@@ -99,6 +113,7 @@ class CardEmulationService : HostApduService() {
     private var customResponses: Map<String, String>? = null
     private var customUid: String? = null
     private var emulationEnabled: Boolean = false
+    private var mifareEmulator: MifareClassicEmulator? = null
     
     override fun onCreate() {
         super.onCreate()
@@ -120,6 +135,18 @@ class CardEmulationService : HostApduService() {
                 Log.e(TAG, "Failed to load custom responses: ${e.message}")
             }
         }
+
+        // Initialize Mifare Classic emulator if card type is Mifare Classic
+        val cardType = prefs?.getString(KEY_CARD_TYPE, null)
+        val uid = customUid
+        if (cardType != null && cardType.contains("Mifare", ignoreCase = true) && uid != null) {
+            val atqa = prefs?.getString(KEY_ATQA, null)
+            val sak = prefs?.getString(KEY_SAK, null)
+            mifareEmulator = MifareClassicEmulator(uid, atqa, sak)
+            Log.d(TAG, "Mifare Classic UID emulator initialized for UID: $uid")
+        } else {
+            mifareEmulator = null
+        }
     }
     
     override fun processCommandApdu(commandApdu: ByteArray?, extras: Bundle?): ByteArray {
@@ -135,6 +162,12 @@ class CardEmulationService : HostApduService() {
         customResponses?.get(commandHex)?.let { response ->
             Log.d(TAG, "Returning custom response: $response")
             return response.hexToByteArray()
+        }
+
+        // Check Mifare Classic emulator for UID-related commands
+        mifareEmulator?.handleCommand(commandApdu)?.let { response ->
+            Log.d(TAG, "Mifare Classic emulator handled command")
+            return response
         }
         
         // Handle SELECT command (ISO 7816-4)
