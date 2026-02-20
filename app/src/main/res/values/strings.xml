@@ -101,6 +101,8 @@
     <string name="emulation_not_supported">Emulation Not Supported</string>
     <string name="emulation_not_supported_message">This card type cannot be emulated via HCE. Only certain card types support software emulation.</string>
     <string name="emulation_uid_only">UID Emulation (Mifare Classic)</string>
+    <string name="mifare_classic_hce_limitation_title">Mifare Classic Limitation</string>
+    <string name="mifare_classic_hce_limitation">Mifare Classic cards use the ISO 14443-3 protocol with proprietary CRYPTO1 authentication, which operates at a lower layer than Android HCE (ISO 14443-4 / ISO-DEP).\n\nAndroid HCE will respond to ISO-DEP capable readers with the card\'s UID, ATQA and SAK. However, standard Mifare Classic-only readers may not detect this emulation because they never send ISO 7816 APDU commands.\n\nFor best results, use the emulation with readers that support both Mifare Classic and ISO-DEP.</string>
     <string name="select_card_first">Please select a card first</string>
     <string name="select_card_to_emulate">Select Card to Emulate</string>
     <string name="no_cards_title">No Cards Available</string>
