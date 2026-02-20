@@ -108,7 +108,7 @@ class CardBackupHandler {
                 isoStandard = "ISO/IEC 14443-A",
                 technologies = "MifareClassic,NfcA",
                 memorySize = mifare.size,
-                canEmulate = false // Mifare Classic requires hardware support
+                canEmulate = true // UID-level emulation via HCE
             )
             
             return BackupResult(

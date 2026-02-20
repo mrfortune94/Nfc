@@ -138,11 +138,17 @@ class EmulateCardActivity : AppCompatActivity() {
             binding.selectedCardType.text = getString(R.string.card_type_format, backup.cardType)
             binding.selectedCardIso.text = getString(R.string.card_iso_format, backup.isoStandard)
             
+            val isMifareClassic = backup.cardType.contains("Mifare", ignoreCase = true)
+            
             binding.emulationSupportedIcon.setImageResource(
                 if (backup.canEmulate) R.drawable.ic_check_circle else R.drawable.ic_warning
             )
             binding.emulationSupportedText.text = getString(
-                if (backup.canEmulate) R.string.emulation_supported else R.string.emulation_not_supported
+                when {
+                    isMifareClassic && backup.canEmulate -> R.string.emulation_uid_only
+                    backup.canEmulate -> R.string.emulation_supported
+                    else -> R.string.emulation_not_supported
+                }
             )
         }
     }
@@ -152,12 +158,31 @@ class EmulateCardActivity : AppCompatActivity() {
             // Configure the HCE service with the backup data
             val responses = mutableMapOf<String, String>()
             
+            // Determine ATQA and SAK from stored sector data for Mifare Classic
+            var atqa: String? = null
+            var sak: String? = null
+            if (backup.cardType.contains("Mifare", ignoreCase = true)) {
+                try {
+                    val data = com.google.gson.Gson().fromJson(
+                        backup.sectorData,
+                        Map::class.java
+                    )
+                    atqa = data?.get("atqa") as? String
+                    sak = data?.get("sak") as? String
+                } catch (_: Exception) {
+                    // ATQA/SAK not available in sector data; defaults will be used
+                }
+            }
+
             // Store basic card info for emulation
             CardEmulationService.setEmulationData(
                 context = this,
                 uid = backup.uid,
                 responses = responses,
-                enabled = true
+                enabled = true,
+                cardType = backup.cardType,
+                atqa = atqa,
+                sak = sak
             )
             
             isEmulationActive = true
